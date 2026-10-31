@@ -1,332 +1,681 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Studio AI</title>
+<title>StudioAI — Roblox Development Assistant</title>
+<meta name="theme-color" content="#090d1b">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
 <style>
 :root {
-  --bg:#0b0e14;
-  --panel:#111722;
-  --panel2:#171f2d;
-  --border:#252f40;
-  --text:#edf2fc;
-  --muted:#8996ab;
-  --accent:#819bff;
+    --bg: #090d1b;
+    --panel: #10172a;
+    --panel2: #151e35;
+    --border: rgba(148,163,184,.13);
+    --blue: #3b82f6;
+    --indigo: #6366f1;
+    --purple: #8b5cf6;
+    --text: #f1f5ff;
+    --muted: #8793ad;
 }
-*{box-sizing:border-box}
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font-family:Inter,Segoe UI,Arial,sans-serif;
-  height:100vh;
-  overflow:hidden;
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    background:
+        radial-gradient(ellipse at 60% -20%, rgba(79,70,229,.20), transparent 45%),
+        radial-gradient(ellipse at 100% 50%, rgba(59,130,246,.08), transparent 40%),
+        var(--bg);
+    color: var(--text);
+    font-family: Inter, sans-serif;
+    min-height: 100vh;
 }
-button{font:inherit;cursor:pointer}
-.app{display:flex;height:100vh}
-.sidebar{
-  width:245px;
-  background:#0e131d;
-  border-right:1px solid var(--border);
-  padding:22px 15px;
-  display:flex;
-  flex-direction:column;
+
+button, input, textarea, select { font: inherit; }
+
+button { cursor: pointer; }
+
+.app {
+    display: flex;
+    min-height: 100vh;
 }
-.logo{font-size:21px;font-weight:800;padding:0 10px 28px}
-.logo span{color:var(--accent)}
-.section-label{
-  color:#68758b;
-  font-size:10px;
-  letter-spacing:1.5px;
-  font-weight:700;
-  padding:15px 10px 8px;
+
+.sidebar {
+    width: 250px;
+    flex-shrink: 0;
+    background: rgba(10,15,30,.88);
+    border-right: 1px solid var(--border);
+    padding: 25px 17px;
+    display: flex;
+    flex-direction: column;
 }
-.nav{
-  border:0;
-  background:transparent;
-  color:#a8b4c9;
-  width:100%;
-  padding:11px 12px;
-  text-align:left;
-  border-radius:8px;
-  margin:2px 0;
-  font-size:13px;
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    font-weight: 800;
+    font-size: 21px;
+    letter-spacing: -.8px;
+    padding: 0 9px;
+    margin-bottom: 38px;
 }
-.nav:hover,.nav.active{background:#1a2435;color:white}
-.nav.active{border:1px solid #2c3b58}
-.sidebar-bottom{margin-top:auto}
-.profile{
-  border-top:1px solid var(--border);
-  padding:16px 8px 0;
-  display:flex;
-  gap:10px;
-  align-items:center;
+
+.logo {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: linear-gradient(135deg,var(--blue),var(--purple));
+    display: grid;
+    place-items: center;
+    box-shadow: 0 5px 25px #5145cd55;
 }
-.avatar{
-  width:34px;height:34px;border-radius:10px;
-  display:grid;place-items:center;
-  background:#293a60;font-weight:800;
+
+.logo svg { width: 22px; }
+
+.section-label {
+    color: #65718b;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    padding: 0 11px;
+    margin: 18px 0 10px;
 }
-.profile small{display:block;color:var(--muted);margin-top:3px}
-.main{flex:1;min-width:0;display:flex;flex-direction:column}
-.topbar{
-  height:65px;border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 27px;
+
+.nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 10px;
+    color: #929db5;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 5px;
+    cursor: pointer;
+    transition: .2s;
 }
-.topbar-title{font-size:14px;font-weight:650}
-.top-right{display:flex;align-items:center;gap:15px}
-.status{font-size:11px;color:#d6a75f}
-.status:before{content:"●";color:#d6a75f;margin-right:7px}
-.model-select{
-  background:#171f2d;color:#dce5f8;
-  border:1px solid var(--border);
-  border-radius:8px;padding:8px 10px;
-  font-size:12px;
+
+.nav:hover, .nav.active {
+    color: white;
+    background: linear-gradient(100deg,#2446a555,#713ec633);
 }
-.content{flex:1;overflow:auto;padding:35px}
-.page{display:none;max-width:1050px;margin:auto}
-.page.active{display:block}
-.welcome{margin:30px 0 35px}
-.eyebrow{color:var(--accent);font-size:11px;letter-spacing:2px;font-weight:700}
-h1{font-size:34px;letter-spacing:-1.4px;margin:10px 0}
-.subtitle{color:var(--muted);font-size:14px;line-height:1.7}
-.grid{
-  display:grid;grid-template-columns:repeat(3,1fr);
-  gap:15px;margin-top:24px;
+
+.nav.active {
+    border: 1px solid #536de455;
 }
-.card{
-  background:var(--panel);border:1px solid var(--border);
-  border-radius:12px;padding:19px;
+
+.nav svg {
+    width: 18px;
+    height: 18px;
 }
-.card-icon{font-size:22px;margin-bottom:13px}
-.card h3{font-size:14px;margin:0 0 8px}
-.card p{font-size:12px;color:var(--muted);line-height:1.6;margin:0}
-.panel-title{font-size:15px;font-weight:700;margin:35px 0 15px}
-.chatbox{
-  background:var(--panel);border:1px solid var(--border);
-  border-radius:13px;padding:20px;
+
+.sidebar-bottom {
+    margin-top: auto;
 }
-.messages{min-height:150px;max-height:360px;overflow:auto}
-.message{
-  padding:12px 14px;border-radius:9px;
-  background:#192335;margin-bottom:10px;
-  font-size:13px;line-height:1.7;white-space:pre-wrap;
+
+.connection {
+    border: 1px solid var(--border);
+    background: #111a2d;
+    border-radius: 12px;
+    padding: 13px;
+    margin-bottom: 18px;
 }
-.message.user{background:#243455}
-.composer{
-  border:1px solid #34425a;background:#0c121d;
-  border-radius:10px;padding:10px;margin-top:15px;
+
+.connection-title {
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 9px;
 }
-textarea{
-  width:100%;background:transparent;border:0;outline:0;
-  color:white;resize:vertical;min-height:65px;
-  font:13px Arial;padding:8px;
+
+.status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--muted);
 }
-.composer-bottom{display:flex;justify-content:space-between;align-items:center}
-.hint{font-size:10px;color:#718099}
-.primary{
-  background:var(--accent);color:#091020;
-  border:0;border-radius:7px;padding:9px 15px;
-  font-size:12px;font-weight:750;
+
+.dot {
+    width: 7px;
+    height: 7px;
+    background: #64748b;
+    border-radius: 50%;
 }
-.secondary{
-  background:#1b2638;color:#dce5f8;
-  border:1px solid var(--border);border-radius:8px;
-  padding:10px 14px;font-size:12px;
+
+.dot.online {
+    background: #22c55e;
+    box-shadow: 0 0 9px #22c55e88;
 }
-.list-item{
-  padding:17px 0;border-bottom:1px solid var(--border);
-  display:flex;justify-content:space-between;align-items:center;
+
+.main {
+    flex: 1;
+    min-width: 0;
+    padding: 28px 5%;
 }
-.list-item small{color:var(--muted)}
-.settings-input{
-  background:#0c121d;border:1px solid var(--border);
-  padding:11px;color:white;border-radius:8px;width:100%;
-  margin-top:8px;
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 65px;
 }
-label{font-size:12px;color:#a9b6cb}
-.empty{padding:30px;text-align:center;color:var(--muted);font-size:13px}
-@media(max-width:750px){
-  .sidebar{width:65px;padding:15px 6px}
-  .logo{font-size:0;padding:8px}
-  .logo:after{content:"◈";font-size:22px}
-  .section-label,.nav span,.profile>div:last-child{display:none}
-  .nav{text-align:center;padding:13px 4px}
-  .profile{justify-content:center;padding:15px 0 0}
-  .content{padding:18px}
-  .grid{grid-template-columns:1fr}
-  .topbar{padding:0 14px}
+
+.breadcrumb {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.breadcrumb strong { color: white; }
+
+.top-right {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.model-select {
+    color: #dce6ff;
+    background: #151e35;
+    border: 1px solid var(--border);
+    padding: 10px 13px;
+    border-radius: 9px;
+    outline: none;
+    max-width: 220px;
+    font-size: 12px;
+}
+
+.model-select option {
+    background: #11182b;
+}
+
+.avatar {
+    width: 35px;
+    height: 35px;
+    display: grid;
+    place-items: center;
+    border-radius: 11px;
+    background: linear-gradient(135deg,var(--blue),var(--purple));
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.hero {
+    max-width: 850px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #a5b4fc;
+    background: #4338ca22;
+    border: 1px solid #6366f144;
+    padding: 8px 13px;
+    border-radius: 30px;
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 23px;
+}
+
+.hero h1 {
+    font-size: clamp(36px,5vw,57px);
+    line-height: 1.12;
+    letter-spacing: -2.8px;
+    margin: 0;
+    font-weight: 800;
+}
+
+.gradient-text {
+    background: linear-gradient(100deg,#60a5fa 10%,#818cf8 48%,#c084fc 90%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.hero p {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.8;
+    max-width: 520px;
+    margin: 18px auto 34px;
+}
+
+.chat-box {
+    background: linear-gradient(145deg,#141d34,#10172a);
+    border: 1px solid #6475bd44;
+    border-radius: 17px;
+    padding: 15px;
+    box-shadow: 0 15px 70px #0005, 0 0 35px #5145cd12;
+    text-align: left;
+    transition: .2s;
+}
+
+.chat-box:focus-within {
+    border-color: #6366f1aa;
+    box-shadow: 0 15px 70px #0005,0 0 25px #6366f122;
+}
+
+#message {
+    display: block;
+    width: 100%;
+    min-height: 90px;
+    resize: vertical;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: white;
+    font-size: 14px;
+    padding: 7px;
+}
+
+#message::placeholder { color: #64718e; }
+
+.chat-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+}
+
+.chat-hint {
+    color: #73809b;
+    font-size: 11px;
+}
+
+.send {
+    background: linear-gradient(110deg,#3478ef,#7152e9);
+    border: none;
+    color: white;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 11px 18px;
+    border-radius: 9px;
+    box-shadow: 0 4px 18px #4f46e555;
+    transition: .2s;
+}
+
+.send:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.15);
+}
+
+.send:disabled {
+    opacity: .55;
+    cursor: wait;
+    transform: none;
+}
+
+.suggestions {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 12px;
+    margin-top: 18px;
+    text-align: left;
+}
+
+.suggestion {
+    background: #111a2d;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 15px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.suggestion:hover {
+    background: #192442;
+    border-color: #6366f177;
+    transform: translateY(-2px);
+}
+
+.suggestion-icon {
+    width: 31px;
+    height: 31px;
+    display: grid;
+    place-items: center;
+    border-radius: 9px;
+    margin-bottom: 12px;
+    background: #315ddc33;
+    color: #7db5ff;
+}
+
+.suggestion:nth-child(2) .suggestion-icon {
+    background: #7646d333;
+    color: #c4a4ff;
+}
+
+.suggestion:nth-child(3) .suggestion-icon {
+    background: #4b54bd33;
+    color: #a5b4fc;
+}
+
+.suggestion strong {
+    font-size: 12px;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.suggestion span {
+    color: var(--muted);
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+.response-area {
+    max-width: 850px;
+    margin: 30px auto 0;
+    display: none;
+    text-align: left;
+}
+
+.response-card {
+    background: #111a2d;
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    padding: 20px;
+    margin-bottom: 14px;
+}
+
+.response-heading {
+    font-size: 12px;
+    font-weight: 700;
+    color: #a5b4fc;
+    margin-bottom: 14px;
+}
+
+.response-content {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    color: #dbe5f8;
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+.error { color: #fca5a5; }
+
+.footer {
+    text-align: center;
+    color: #596780;
+    font-size: 10px;
+    margin-top: 65px;
+}
+
+@media(max-width:750px) {
+    .sidebar { width: 66px; padding: 20px 9px; }
+    .brand { padding: 0 4px; }
+    .brand-name,.nav span,.section-label,.connection { display:none; }
+    .nav { justify-content:center; padding:12px 5px; }
+    .main { padding: 20px 15px; }
+    .topbar { margin-bottom: 50px; }
+    .suggestions { grid-template-columns:1fr; }
+    .hero h1 { letter-spacing:-1.5px; }
+    .model-select { max-width:160px; }
 }
 </style>
 </head>
+
 <body>
 <div class="app">
+
 <aside class="sidebar">
-  <div class="logo">◈ Studio <span>AI</span></div>
-  <div class="section-label">WORKSPACE</div>
-  <button class="nav active" data-page="dashboard">⌂ <span>Dashboard</span></button>
-  <button class="nav" data-page="chat">✧ <span>AI Chat</span></button>
-  <button class="nav" data-page="projects">▣ <span>Projects</span></button>
-  <div class="section-label">DEVELOPMENT</div>
-  <button class="nav" data-page="models">◈ <span>AI Models</span></button>
-  <button class="nav" data-page="plugin">⌘ <span>Studio Plugin</span></button>
-  <div class="section-label">PREFERENCES</div>
-  <button class="nav" data-page="settings">⚙ <span>Settings</span></button>
-  <div class="sidebar-bottom">
-    <div class="profile">
-      <div class="avatar">S</div>
-      <div><strong>Studio AI</strong><small>Local workspace</small></div>
+    <div class="brand">
+        <div class="logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                <path d="M4 17L12 4l8 13H4Z"/>
+                <path d="M8 17l4-7 4 7"/>
+            </svg>
+        </div>
+        <span class="brand-name">StudioAI</span>
     </div>
-  </div>
+
+    <div class="section-label">WORKSPACE</div>
+    <div class="nav active" data-page="home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/></svg>
+        <span>Dashboard</span>
+    </div>
+    <div class="nav" data-page="chat">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.5 8.5 0 0 1-9 8.5 9 9 0 0 1-4-.9L3 21l1.9-4.5A8.5 8.5 0 1 1 21 11.5Z"/></svg>
+        <span>AI Assistant</span>
+    </div>
+    <div class="nav" data-page="projects">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10H3V7Z"/></svg>
+        <span>Projects</span>
+    </div>
+
+    <div class="section-label">CONFIGURATION</div>
+    <div class="nav" data-page="models">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-1.7 2.9-.2-.1a1.7 1.7 0 0 0-1.8.2l-.2.1h-3.4l-.1-.2a1.7 1.7 0 0 0-1.6-1.1h-.2l-1.7-2.9.1-.2a1.7 1.7 0 0 0-.4-1.8l-.1-.1v-3.4l.2-.1a1.7 1.7 0 0 0 1.1-1.6v-.2l2.9-1.7.2.1a1.7 1.7 0 0 0 1.8-.4l.1-.1h3.4l.1.2a1.7 1.7 0 0 0 1.6 1.1h.2l1.7 2.9-.1.2a1.7 1.7 0 0 0 .4 1.8l.1.1v3.4Z" transform="translate(-2 -2) scale(.95)"/></svg>
+        <span>AI Models</span>
+    </div>
+    <div class="nav" data-page="connection">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 12h8m-8 4h5M7 4h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/></svg>
+        <span>Connections</span>
+    </div>
+
+    <div class="sidebar-bottom">
+        <div class="connection">
+            <div class="connection-title">Local AI connection</div>
+            <div class="status"><span class="dot" id="sideDot"></span><span id="sideStatus">Checking...</span></div>
+        </div>
+        <div class="nav" data-page="settings">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-1.7 2.9-.2-.1a1.7 1.7 0 0 0-1.8.2l-.2.1h-3.4l-.1-.2a1.7 1.7 0 0 0-1.6-1.1h-.2l-1.7-2.9.1-.2a1.7 1.7 0 0 0-.4-1.8l-.1-.1v-3.4l.2-.1a1.7 1.7 0 0 0 1.1-1.6v-.2l2.9-1.7.2.1a1.7 1.7 0 0 0 1.8-.4l.1-.1h3.4l.1.2a1.7 1.7 0 0 0 1.6 1.1h.2l1.7 2.9-.1.2a1.7 1.7 0 0 0 .4 1.8l.1.1v3.4Z" transform="translate(-2 -2) scale(.95)"/></svg>
+            <span>Settings</span>
+        </div>
+    </div>
 </aside>
 
 <main class="main">
-  <header class="topbar">
-    <div class="topbar-title" id="pageTitle">Dashboard</div>
-    <div class="top-right">
-      <div class="status" id="connectionStatus">Backend not connected</div>
-      <select class="model-select" id="model">
-        <option>qwen2.5:7b</option>
-      </select>
-    </div>
-  </header>
-
-  <div class="content">
-
-  <section class="page active" id="dashboard">
-    <div class="welcome">
-      <div class="eyebrow">ROBLOX DEVELOPMENT PLATFORM</div>
-      <h1>Build something amazing.</h1>
-      <p class="subtitle">Your AI-powered workspace for creating Roblox experiences.<br>Write code, understand your projects, and build faster.</p>
-      <button class="primary" onclick="showPage('chat')">Start a conversation →</button>
-    </div>
-    <div class="grid">
-      <div class="card"><div class="card-icon">✧</div><h3>AI Development</h3><p>Generate complete Roblox scripts, debug errors, and create game systems.</p></div>
-      <div class="card"><div class="card-icon">▣</div><h3>Project Understanding</h3><p>Give your AI context about your Roblox game and its structure.</p></div>
-      <div class="card"><div class="card-icon">⌘</div><h3>Studio Integration</h3><p>Connect the assistant directly to Roblox Studio through a plugin.</p></div>
-    </div>
-    <div class="panel-title">Quick actions</div>
-    <div class="grid">
-      <div class="card"><h3>Generate a script</h3><p>Build a new Roblox feature with AI assistance.</p><br><button class="secondary" onclick="showPage('chat')">Open AI Chat</button></div>
-      <div class="card"><h3>Connect your model</h3><p>Configure your local Ollama installation.</p><br><button class="secondary" onclick="showPage('models')">View models</button></div>
-      <div class="card"><h3>Install the plugin</h3><p>Connect Roblox Studio to your assistant.</p><br><button class="secondary" onclick="showPage('plugin')">Plugin setup</button></div>
-    </div>
-  </section>
-
-  <section class="page" id="chat">
-    <div class="welcome">
-      <div class="eyebrow">AI ASSISTANT</div>
-      <h1>What are we building?</h1>
-      <p class="subtitle">Ask Studio AI to help with your Roblox development.</p>
-    </div>
-    <div class="chatbox">
-      <div class="messages" id="messages">
-        <div class="message">Welcome to Studio AI. Your local AI connection has not been configured yet. You can connect it in Settings.</div>
-      </div>
-      <div class="composer">
-        <textarea id="prompt" placeholder="Describe what you want to build in Roblox Studio..."></textarea>
-        <div class="composer-bottom">
-          <span class="hint">Enter to send · Shift + Enter for new line</span>
-          <button class="primary" id="send">Send ↑</button>
+    <header class="topbar">
+        <div class="breadcrumb">Workspace / <strong id="breadcrumbPage">Dashboard</strong></div>
+        <div class="top-right">
+            <select class="model-select" id="modelSelect" aria-label="Select AI model">
+                <option value="qwen2.5:7b">Qwen 2.5 7B</option>
+                <option value="qwen2.5-coder:14b-16k">Qwen Coder 14B 16K</option>
+                <option value="qwen2.5-coder:14b">Qwen Coder 14B</option>
+            </select>
+            <div class="avatar">S</div>
         </div>
-      </div>
-    </div>
-  </section>
+    </header>
 
-  <section class="page" id="projects">
-    <div class="welcome"><div class="eyebrow">YOUR WORKSPACE</div><h1>Projects</h1><p class="subtitle">Manage your Roblox development projects.</p></div>
-    <div class="card"><div class="empty">No projects have been added yet.<br><br>Project synchronization will be added when the Studio plugin is connected.</div></div>
-  </section>
+    <section class="hero">
+        <div class="eyebrow">
+            <span class="dot online"></span>
+            YOUR ROBLOX DEVELOPMENT ASSISTANT
+        </div>
 
-  <section class="page" id="models">
-    <div class="welcome"><div class="eyebrow">LOCAL AI</div><h1>AI Models</h1><p class="subtitle">Manage the models available through your local Ollama installation.</p></div>
-    <div class="card">
-      <h3>Default model</h3>
-      <p>Qwen 2.5 7B · Local Ollama model</p>
-      <div class="list-item"><span>qwen2.5:7b</span><small>Configured default</small></div>
-      <p>Model discovery and selection will be enabled after the backend connection is configured.</p>
-    </div>
-  </section>
+        <h1>Build something<br><span class="gradient-text">incredible.</span></h1>
+        <p>
+            Your workspace for creating, scripting, and improving Roblox experiences.
+            Powered by your own local AI models.
+        </p>
 
-  <section class="page" id="plugin">
-    <div class="welcome"><div class="eyebrow">ROBLOX INTEGRATION</div><h1>Studio Plugin</h1><p class="subtitle">Connect Studio AI to Roblox Studio.</p></div>
-    <div class="card">
-      <div class="card-icon">⌘</div>
-      <h3>Studio AI for Roblox Studio</h3>
-      <p>The plugin will connect your Roblox Studio project to your local AI assistant.</p><br>
-      <div class="list-item"><span>Plugin status</span><small>Not installed</small></div>
-      <div class="list-item"><span>AI connection</span><small>Not configured</small></div>
-      <p>Installation instructions and plugin download will be added when the plugin is ready.</p>
-    </div>
-  </section>
+        <div class="chat-box">
+            <textarea id="message" placeholder="Ask StudioAI to build a system, debug a script, or brainstorm your next game..."></textarea>
+            <div class="chat-actions">
+                <span class="chat-hint">Enter to send · Shift + Enter for a new line</span>
+                <button class="send" id="sendButton" onclick="sendMessage()">Send message ↗</button>
+            </div>
+        </div>
 
-  <section class="page" id="settings">
-    <div class="welcome"><div class="eyebrow">PREFERENCES</div><h1>Settings</h1><p class="subtitle">Configure your local Studio AI connection.</p></div>
-    <div class="card">
-      <h3>Local backend</h3><br>
-      <label for="backendUrl">Backend address</label>
-      <input class="settings-input" id="backendUrl" value="http://127.0.0.1:8765">
-      <br><br>
-      <button class="primary" id="testConnection">Test connection</button>
-      <p id="testResult">Your backend is not connected.</p>
-    </div>
-  </section>
+        <div class="suggestions">
+            <div class="suggestion" onclick="usePrompt('Create a complete Roblox sprint system with PC and mobile controls.')">
+                <div class="suggestion-icon">⌘</div>
+                <strong>Generate scripts</strong>
+                <span>Create complete Roblox systems with Luau.</span>
+            </div>
+            <div class="suggestion" onclick="usePrompt('Help me debug a Roblox Studio script. Explain common causes and how to fix them.')">
+                <div class="suggestion-icon">⚡</div>
+                <strong>Debug code</strong>
+                <span>Find issues and understand your errors.</span>
+            </div>
+            <div class="suggestion" onclick="usePrompt('Give me five original Roblox horror game concepts with unique mechanics.')">
+                <div class="suggestion-icon">✦</div>
+                <strong>Game ideas</strong>
+                <span>Explore mechanics and new experiences.</span>
+            </div>
+        </div>
+    </section>
 
-  </div>
+    <section class="response-area" id="responseArea">
+        <div class="response-card">
+            <div class="response-heading">YOU</div>
+            <div class="response-content" id="userQuestion"></div>
+        </div>
+        <div class="response-card">
+            <div class="response-heading">✦ STUDIOAI</div>
+            <div class="response-content" id="aiResponse">Thinking...</div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        STUDIOAI · BUILT FOR ROBLOX CREATORS
+    </footer>
 </main>
 </div>
 
 <script>
-function showPage(page){
- document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
- document.querySelectorAll(".nav").forEach(n=>n.classList.remove("active"));
- document.getElementById(page).classList.add("active");
- const button=document.querySelector('[data-page="'+page+'"]');
- if(button)button.classList.add("active");
- document.getElementById("pageTitle").textContent=
- page.charAt(0).toUpperCase()+page.slice(1);
+const API = "http://127.0.0.1:3000";
+
+const messageInput = document.getElementById("message");
+const sendButton = document.getElementById("sendButton");
+const responseArea = document.getElementById("responseArea");
+const userQuestion = document.getElementById("userQuestion");
+const aiResponse = document.getElementById("aiResponse");
+const modelSelect = document.getElementById("modelSelect");
+
+async function checkConnection() {
+    const dot = document.getElementById("sideDot");
+    const status = document.getElementById("sideStatus");
+
+    try {
+        const response = await fetch(`${API}/health`);
+        if (!response.ok) throw new Error("Offline");
+
+        const data = await response.json();
+        dot.classList.add("online");
+        status.textContent = data.status === "online" ? "Ollama connected" : "Offline";
+    } catch {
+        dot.classList.remove("online");
+        status.textContent = "Start local server";
+    }
 }
-document.querySelectorAll(".nav").forEach(button=>{
- button.addEventListener("click",()=>showPage(button.dataset.page));
+
+async function loadModels() {
+    try {
+        const response = await fetch(`${API}/models`);
+        if (!response.ok) throw new Error("Models unavailable");
+
+        const data = await response.json();
+
+        for (const option of modelSelect.options) {
+            const model = data.models.find(item => item.name === option.value);
+            option.disabled = !model || !model.installed;
+            if (option.disabled) option.textContent += " (not installed)";
+        }
+
+        const selected = modelSelect.selectedOptions[0];
+        if (selected && selected.disabled) {
+            const available = [...modelSelect.options].find(option => !option.disabled);
+            if (available) modelSelect.value = available.value;
+        }
+    } catch (error) {
+        console.warn("Could not load model list:", error);
+    }
+}
+
+function usePrompt(prompt) {
+    messageInput.value = prompt;
+    messageInput.focus();
+}
+
+async function sendMessage() {
+    const message = messageInput.value.trim();
+    if (!message) return;
+
+    sendButton.disabled = true;
+    sendButton.textContent = "Thinking...";
+    responseArea.style.display = "block";
+    userQuestion.textContent = message;
+    aiResponse.classList.remove("error");
+    aiResponse.textContent = "StudioAI is thinking...";
+    responseArea.scrollIntoView({ behavior: "smooth", block: "start" });
+
+    try {
+        const response = await fetch(`${API}/chat`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                message,
+                model: modelSelect.value
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || "The request failed.");
+        }
+
+        aiResponse.textContent = data.reply;
+        messageInput.value = "";
+    } catch (error) {
+        aiResponse.classList.add("error");
+        aiResponse.textContent =
+            "Could not reach StudioAI.\n\n" +
+            error.message +
+            "\n\nMake sure Ollama and your local StudioAI server are running.";
+    } finally {
+        sendButton.disabled = false;
+        sendButton.textContent = "Send message ↗";
+    }
+}
+
+messageInput.addEventListener("keydown", event => {
+    if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage();
+    }
 });
-const backendUrl=()=>document.getElementById("backendUrl").value.replace(/\/+$/,"");
-document.getElementById("testConnection").addEventListener("click",async()=>{
- const result=document.getElementById("testResult");
- result.textContent="Checking connection...";
- try{
-  const response=await fetch(backendUrl()+"/health");
-  if(!response.ok)throw new Error("Backend returned "+response.status);
-  const data=await response.json();
-  result.textContent="Connected successfully · "+(data.model||"Local AI");
-  document.getElementById("connectionStatus").textContent="Backend connected";
- }catch(error){
-  result.textContent="Could not connect. Make sure your local backend is running and accessible.";
-  document.getElementById("connectionStatus").textContent="Backend not connected";
- }
+
+document.querySelectorAll(".nav").forEach(item => {
+    item.addEventListener("click", () => {
+        document.querySelectorAll(".nav").forEach(nav => nav.classList.remove("active"));
+        item.classList.add("active");
+
+        const page = item.dataset.page;
+        const labels = {
+            home: "Dashboard",
+            chat: "AI Assistant",
+            projects: "Projects",
+            models: "AI Models",
+            connection: "Connections",
+            settings: "Settings"
+        };
+
+        document.getElementById("breadcrumbPage").textContent = labels[page] || "Dashboard";
+
+        if (page === "chat") {
+            messageInput.focus();
+        } else if (page !== "home") {
+            alert(`${labels[page]} is planned for a future StudioAI update.`);
+        }
+    });
 });
-document.getElementById("send").addEventListener("click",async()=>{
- const input=document.getElementById("prompt");
- const text=input.value.trim();
- if(!text)return;
- const messages=document.getElementById("messages");
- const user=document.createElement("div");
- user.className="message user";
- user.textContent=text;
- messages.appendChild(user);
- input.value="";
- const reply=document.createElement("div");
- reply.className="message";
- reply.textContent="The AI backend has not been connected yet. Open Settings to configure your local connection.";
- messages.appendChild(reply);
-});
-document.getElementById("prompt").addEventListener("keydown",e=>{
- if(e.key==="Enter"&&!e.shiftKey){
-  e.preventDefault();
-  document.getElementById("send").click();
- }
-});
+
+checkConnection();
+loadModels();
+setInterval(checkConnection, 15000);
 </script>
 </body>
 </html>
