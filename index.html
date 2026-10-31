@@ -1,0 +1,57 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Studio AI</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#090d16;color:#edf2ff;font-family:Inter,Arial,sans-serif}
+header{height:70px;border-bottom:1px solid #202a3d;display:flex;align-items:center;justify-content:space-between;padding:0 7%}
+.logo{font-size:22px;font-weight:800}
+.logo span{color:#829cff}
+.status{font-size:12px;color:#8998b5}
+main{max-width:1000px;margin:100px auto;padding:25px;text-align:center}
+h1{font-size:55px;margin:15px 0;letter-spacing:-2px}
+h1 span{color:#829cff}
+.subtitle{color:#96a5c1;font-size:17px;line-height:1.7}
+.panel{margin:45px auto 0;max-width:700px;background:#111a2b;border:1px solid #26344c;border-radius:17px;padding:25px;text-align:left}
+.panel h2{font-size:17px;margin-top:0}
+textarea{width:100%;height:115px;resize:vertical;background:#0a1120;border:1px solid #2a3954;border-radius:10px;padding:15px;color:white;font:14px Arial}
+button{background:#829cff;color:#081020;border:0;border-radius:9px;padding:12px 22px;font-weight:700;cursor:pointer;margin-top:12px}
+#response{white-space:pre-wrap;overflow-wrap:anywhere;color:#d5def2;line-height:1.6;margin-top:20px}
+footer{margin-top:70px;color:#62718e;font-size:12px}
+@media(max-width:600px){h1{font-size:38px}main{margin-top:50px}}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">◈ Studio <span>AI</span></div>
+<div class="status">ROBLOX DEVELOPMENT ASSISTANT</div>
+</header>
+<main>
+<div class="status">POWERED BY LOCAL AI</div>
+<h1>Build Roblox games<br>with <span>AI.</span></h1>
+<p class="subtitle">
+Your AI development assistant for Roblox Studio.<br>
+Create scripts, build systems, debug errors, and more.
+</p>
+<section class="panel">
+<h2>Ask Studio AI</h2>
+<textarea id="prompt" placeholder="Describe what you want to create in Roblox Studio..."></textarea>
+<button id="send">Ask Studio AI →</button>
+<div id="response"></div>
+</section>
+<footer>Studio AI · Built for Roblox creators</footer>
+</main>
+<script>
+document.getElementById("send").addEventListener("click",()=>{
+ const prompt=document.getElementById("prompt").value.trim();
+ const response=document.getElementById("response");
+ if(!prompt)return;
+ response.textContent="Your Studio AI website is ready. The local AI backend still needs to be connected.";
+});
+</script>
+</body>
+</html>
