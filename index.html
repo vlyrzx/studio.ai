@@ -3,8 +3,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>StudioAI</title>
+
 <style>
 :root {
     --bg: #090b10;
@@ -16,18 +18,25 @@
     --accent: #8b75ff;
     --accent2: #6754df;
 }
+
 * { box-sizing: border-box; }
+
 body {
     margin: 0;
     background: var(--bg);
     color: var(--text);
-    font-family: Inter, "Segoe UI", sans-serif;
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
     height: 100vh;
     overflow: hidden;
 }
+
+button { font-family: inherit; }
+
 .app { display: flex; height: 100vh; }
+
 .sidebar {
     width: 250px;
+    flex-shrink: 0;
     background: #0c0f16;
     border-right: 1px solid var(--border);
     padding: 22px 15px;
@@ -35,236 +44,746 @@ body {
     flex-direction: column;
     gap: 22px;
 }
-.brand { display:flex; align-items:center; gap:11px; padding: 0 8px; }
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 0 8px;
+}
+
 .logo {
-    width: 36px; height:36px; border-radius: 11px;
-    display:grid; place-items:center;
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+    display: grid;
+    place-items: center;
     background: linear-gradient(135deg,#a28fff,#5843d4);
-    font-weight:900; font-size:19px;
+    font-weight: 900;
+    font-size: 19px;
 }
-.brand-name { font-size:18px; font-weight:750; letter-spacing:-.5px; }
+
+.brand-name {
+    font-size: 18px;
+    font-weight: 750;
+}
+
 .new-chat {
-    border:1px solid #39324f; background:#19162a; color:white;
-    padding:12px; border-radius:10px; text-align:left;
-    cursor:pointer; font-size:13px;
+    border: 1px solid #39324f;
+    background: #19162a;
+    color: white;
+    padding: 12px;
+    border-radius: 10px;
+    text-align: left;
+    cursor: pointer;
+    font-size: 13px;
 }
-.new-chat:hover { background:#24203b; }
+
+.new-chat:hover { background: #24203b; }
+
 .section-label {
-    color:#737b8e; font-size:10px; font-weight:700;
-    letter-spacing:1.5px; padding:0 9px;
+    color: #737b8e;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    padding: 0 9px;
+    margin-bottom: 7px;
 }
+
 .nav-item {
-    display:flex; align-items:center; gap:10px;
-    padding:11px 10px; border-radius:9px;
-    color:#aab1c0; font-size:13px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 10px;
+    border-radius: 9px;
+    color: #aab1c0;
+    font-size: 13px;
+    background: transparent;
+    border: 0;
+    text-align: left;
+    cursor: pointer;
 }
-.nav-item.active { background:#1b1b30; color:#c9bdff; }
-.sidebar-bottom { margin-top:auto; }
+
+.nav-item:hover {
+    background: #171b27;
+    color: white;
+}
+
+.nav-item.active {
+    background: #1b1b30;
+    color: #c9bdff;
+}
+
+.nav-icon {
+    width: 25px;
+    font-weight: 700;
+}
+
+.sidebar-bottom { margin-top: auto; }
+
 .model-card {
-    background:#141925; border:1px solid var(--border);
-    padding:12px; border-radius:11px;
+    background: #141925;
+    border: 1px solid var(--border);
+    padding: 12px;
+    border-radius: 11px;
 }
-.model-title { font-size:12px; font-weight:700; }
-.model-status { font-size:11px; color:var(--muted); margin-top:6px; }
+
+.model-title {
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.model-status {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 6px;
+}
+
 .dot {
-    display:inline-block; width:7px; height:7px;
-    background:#e5a84e; border-radius:50%; margin-right:6px;
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    background: #e5a84e;
+    border-radius: 50%;
+    margin-right: 6px;
 }
-.main { flex:1; display:flex; flex-direction:column; min-width:0; }
+
+.main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
 .topbar {
-    height:65px; border-bottom:1px solid var(--border);
-    display:flex; align-items:center; justify-content:space-between;
-    padding:0 26px;
+    height: 65px;
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 26px;
 }
-.top-title { font-size:14px; font-weight:650; }
-.status { color:var(--muted); font-size:12px; }
+
+.top-title {
+    font-size: 14px;
+    font-weight: 650;
+}
+
+.status {
+    color: var(--muted);
+    font-size: 12px;
+}
+
 .content {
-    flex:1; overflow-y:auto; display:flex;
-    flex-direction:column; align-items:center;
-    padding:35px 20px 20px;
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 35px 20px 20px;
 }
-.welcome { text-align:center; margin:auto 0; max-width:700px; }
+
+.view {
+    width: 100%;
+    max-width: 900px;
+    min-height: 100%;
+    display: none;
+}
+
+.view.active {
+    display: flex;
+    flex-direction: column;
+}
+
+.welcome {
+    text-align: center;
+    margin: auto 0;
+    max-width: 700px;
+    align-self: center;
+}
+
 .welcome-icon {
-    width:65px;height:65px;border-radius:20px;
-    display:grid;place-items:center;margin:0 auto 23px;
-    background:linear-gradient(135deg,#8f7bff,#4938bd);
-    font-size:29px; box-shadow:0 10px 45px #6652db35;
+    width: 65px;
+    height: 65px;
+    border-radius: 20px;
+    display: grid;
+    place-items: center;
+    margin: 0 auto 23px;
+    background: linear-gradient(135deg,#8f7bff,#4938bd);
+    font-size: 29px;
 }
-h1 { font-size:36px; letter-spacing:-1.5px; margin:0 0 12px; }
-.subtitle { color:var(--muted); font-size:14px; line-height:1.7; }
+
+h1 {
+    font-size: 36px;
+    letter-spacing: -1.5px;
+    margin: 0 0 12px;
+}
+
+.subtitle {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.7;
+}
+
 .suggestions {
-    display:grid; grid-template-columns:1fr 1fr;
-    gap:10px; margin-top:30px; text-align:left;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 30px;
+    text-align: left;
 }
+
 .suggestion {
-    background:var(--panel); border:1px solid var(--border);
-    padding:15px; border-radius:12px; cursor:pointer;
-    color:var(--text); font-size:12px; line-height:1.6;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 15px;
+    border-radius: 12px;
+    cursor: pointer;
+    color: var(--text);
+    font-size: 12px;
+    line-height: 1.6;
+    text-align: left;
 }
-.suggestion:hover { border-color:var(--accent); background:#171729; }
-.suggestion strong { display:block; font-size:13px; margin-bottom:4px; }
-.messages { width:100%; max-width:850px; display:flex; flex-direction:column; gap:22px; }
-.message { display:flex; gap:12px; line-height:1.7; font-size:14px; }
+
+.suggestion:hover {
+    border-color: var(--accent);
+    background: #171729;
+}
+
+.suggestion strong {
+    display: block;
+    font-size: 13px;
+    margin-bottom: 4px;
+}
+
+.messages {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.message {
+    display: flex;
+    gap: 12px;
+    line-height: 1.7;
+    font-size: 14px;
+}
+
 .avatar {
-    width:31px;height:31px;flex-shrink:0;border-radius:10px;
-    display:grid;place-items:center;background:#25203d;
-    color:#c8baff;font-weight:800;font-size:12px;
+    width: 31px;
+    height: 31px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    background: #25203d;
+    color: #c8baff;
+    font-weight: 800;
+    font-size: 12px;
 }
-.message.user .avatar { background:#263345; color:#b9d8ff; }
-.message-body { flex:1; min-width:0; white-space:pre-wrap; overflow-wrap:anywhere; }
-.message-name { font-size:11px; color:var(--muted); margin-bottom:5px; }
+
+.message.user .avatar {
+    background: #263345;
+    color: #b9d8ff;
+}
+
+.message-body {
+    flex: 1;
+    min-width: 0;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.message-name {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 5px;
+}
+
 .composer-area {
-    padding:12px 20px 22px; display:flex; justify-content:center;
+    flex-shrink: 0;
+    padding: 12px 20px 22px;
+    display: flex;
+    justify-content: center;
 }
-.composer-wrap { width:100%; max-width:850px; }
+
+.composer-wrap {
+    width: 100%;
+    max-width: 900px;
+}
+
 .composer {
-    background:#131722; border:1px solid #303749;
-    border-radius:15px; padding:12px;
-    box-shadow:0 10px 45px #0005;
+    background: #131722;
+    border: 1px solid #303749;
+    border-radius: 15px;
+    padding: 12px;
 }
+
 textarea {
-    width:100%; height:65px; resize:none; border:0; outline:0;
-    background:transparent; color:white; font:14px inherit;
-    font-family:inherit; padding:5px;
+    width: 100%;
+    height: 65px;
+    resize: none;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: white;
+    font: 14px "Segoe UI", Arial, sans-serif;
+    padding: 5px;
 }
-textarea::placeholder { color:#737b8e; }
-.composer-footer { display:flex; align-items:center; justify-content:space-between; }
-.hint { font-size:10px; color:#727b8d; }
+
+textarea::placeholder { color: #737b8e; }
+
+.composer-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.hint {
+    font-size: 10px;
+    color: #727b8d;
+}
+
 .send {
-    background:var(--accent2); color:white; border:0;
-    border-radius:9px; padding:10px 16px;
-    font-weight:650; cursor:pointer;
+    background: var(--accent2);
+    color: white;
+    border: 0;
+    border-radius: 9px;
+    padding: 10px 16px;
+    font-weight: 650;
+    cursor: pointer;
 }
-.send:disabled { opacity:.5; cursor:not-allowed; }
-.disclaimer { text-align:center; color:#626b7d; font-size:10px; margin-top:10px; }
-.typing { color:var(--muted); font-size:12px; }
+
+.send:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+.disclaimer {
+    text-align: center;
+    color: #626b7d;
+    font-size: 10px;
+    margin-top: 10px;
+}
+
+/* WORKSPACE */
+
+.workspace-header {
+    margin: 4px 0 22px;
+}
+
+.workspace-header h1 {
+    font-size: 28px;
+    letter-spacing: -.7px;
+}
+
+.workspace-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 13px;
+}
+
+.info-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    padding: 18px;
+    min-width: 0;
+}
+
+.info-card h3 {
+    font-size: 13px;
+    margin: 0 0 10px;
+}
+
+.info-card p {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.7;
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+.workspace-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 17px;
+}
+
+.action-button {
+    background: #211d39;
+    border: 1px solid #40376a;
+    color: #e5dfff;
+    border-radius: 9px;
+    padding: 11px 15px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.action-button:hover { background: #2b2550; }
+
+.action-button.secondary {
+    background: #171d29;
+    border-color: var(--border);
+    color: var(--text);
+}
+
+.workspace-note {
+    margin-top: 15px;
+    padding: 13px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.7;
+}
+
+.hidden { display: none !important; }
+
 @media(max-width:700px) {
-    .sidebar { width:65px; padding:15px 8px; }
-    .brand-name,.nav-item span,.section-label,.model-card,.new-chat { display:none; }
-    .brand { justify-content:center; }
-    .nav-item { justify-content:center; }
-    h1 { font-size:27px; }
-    .suggestions { grid-template-columns:1fr; }
-    .topbar { padding:0 15px; }
+    .sidebar {
+        width: 65px;
+        padding: 15px 8px;
+    }
+
+    .brand-name,
+    .nav-item span:not(.nav-icon),
+    .section-label,
+    .model-card,
+    .new-chat {
+        display: none;
+    }
+
+    .brand { justify-content: center; }
+    .nav-item { justify-content: center; }
+    .nav-icon { width: auto; }
+    h1 { font-size: 27px; }
+    .suggestions, .workspace-grid { grid-template-columns: 1fr; }
+    .topbar { padding: 0 15px; }
 }
 </style>
 </head>
+
 <body>
 <div class="app">
-    <aside class="sidebar">
-        <div class="brand">
-            <div class="logo">S</div>
-            <div class="brand-name">StudioAI</div>
+
+<aside class="sidebar">
+
+    <div class="brand">
+        <div class="logo">S</div>
+        <div class="brand-name">StudioAI</div>
+    </div>
+
+    <button class="new-chat" id="newChat">+ New conversation</button>
+
+    <div>
+        <div class="section-label">WORKSPACE</div>
+
+        <button class="nav-item active" id="assistantTab" type="button">
+            <span class="nav-icon">AI</span>
+            <span>AI Assistant</span>
+        </button>
+
+        <button class="nav-item" id="workspaceTab" type="button">
+            <span class="nav-icon">RB</span>
+            <span>Roblox Studio</span>
+        </button>
+    </div>
+
+    <div>
+        <div class="section-label">YOUR AI</div>
+        <div class="nav-item">
+            <span class="nav-icon">Q</span>
+            <span>All tasks in one chat</span>
         </div>
+    </div>
 
-        <button class="new-chat" id="newChat">＋ &nbsp; New conversation</button>
-
-        <div>
-            <div class="section-label">WORKSPACE</div>
-            <div class="nav-item active">✧ <span>AI Assistant</span></div>
-            <div class="nav-item">▣ <span>Roblox Studio</span></div>
-        </div>
-
-        <div>
-            <div class="section-label">YOUR AI</div>
-            <div class="nav-item">◈ <span>All tasks in one chat</span></div>
-        </div>
-
-        <div class="sidebar-bottom">
-            <div class="model-card">
-                <div class="model-title">StudioAI Engine</div>
-                <div class="model-status" id="modelStatus">
-                    <span class="dot"></span>Checking connection...
-                </div>
-                <div class="model-status">Qwen 2.5 Coder 14B</div>
+    <div class="sidebar-bottom">
+        <div class="model-card">
+            <div class="model-title">StudioAI Engine</div>
+            <div class="model-status" id="modelStatus">
+                <span class="dot"></span>Checking connection...
             </div>
+            <div class="model-status">Qwen 2.5 Coder 14B</div>
         </div>
-    </aside>
+    </div>
 
-    <main class="main">
-        <header class="topbar">
-            <div class="top-title">AI Assistant</div>
-            <div class="status" id="topStatus">Connecting...</div>
-        </header>
+</aside>
 
-        <section class="content" id="content">
+<main class="main">
+
+    <header class="topbar">
+        <div class="top-title" id="topTitle">AI Assistant</div>
+        <div class="status" id="topStatus">Connecting...</div>
+    </header>
+
+    <section class="content" id="content">
+
+        <!-- ASSISTANT VIEW -->
+
+        <div class="view active" id="assistantView">
+
             <div class="welcome" id="welcome">
-                <div class="welcome-icon">✧</div>
+
+                <div class="welcome-icon">S</div>
+
                 <h1>What are we building?</h1>
+
                 <div class="subtitle">
                     Your all-in-one Roblox development assistant.<br>
                     Design games, write scripts, build worlds, and fix bugs.
                 </div>
+
                 <div class="suggestions">
-                    <button class="suggestion" data-prompt="Design a unique Roblox horror game concept.">
-                        <strong>✦ Game design</strong>
+
+                    <button class="suggestion"
+                        data-prompt="Design a unique Roblox horror game concept.">
+                        <strong>Game design</strong>
                         Create a unique horror game concept.
                     </button>
-                    <button class="suggestion" data-prompt="Write a complete Roblox Luau sprint system with PC and mobile support.">
-                        <strong>⌘ Scripting</strong>
+
+                    <button class="suggestion"
+                        data-prompt="Write a complete Roblox Luau sprint system with PC and mobile support.">
+                        <strong>Scripting</strong>
                         Create a complete Roblox system.
                     </button>
-                    <button class="suggestion" data-prompt="Help me build a detailed abandoned train station in Roblox Studio.">
-                        <strong>▦ World building</strong>
+
+                    <button class="suggestion"
+                        data-prompt="Help me build a detailed abandoned train station in Roblox Studio.">
+                        <strong>World building</strong>
                         Plan a detailed Roblox environment.
                     </button>
-                    <button class="suggestion" data-prompt="Help me debug this Roblox Studio error: ">
-                        <strong>⌕ Debugging</strong>
+
+                    <button class="suggestion"
+                        data-prompt="Help me debug this Roblox Studio error: ">
+                        <strong>Debugging</strong>
                         Find and fix a Roblox error.
                     </button>
-                </div>
-            </div>
-            <div class="messages" id="messages"></div>
-        </section>
 
-        <footer class="composer-area">
-            <div class="composer-wrap">
-                <div class="composer">
-                    <textarea id="prompt" placeholder="Ask StudioAI anything about Roblox development..."></textarea>
-                    <div class="composer-footer">
-                        <div class="hint">One AI · One conversation · All your tasks</div>
-                        <button class="send" id="send">Send ↑</button>
-                    </div>
                 </div>
-                <div class="disclaimer">StudioAI can make mistakes. Review scripts and approve Studio actions before applying them.</div>
             </div>
-        </footer>
-    </main>
+
+            <div class="messages" id="messages"></div>
+
+        </div>
+
+        <!-- WORKSPACE VIEW -->
+
+        <div class="view" id="workspaceView">
+
+            <div class="workspace-header">
+                <h1>Roblox Studio Workspace</h1>
+                <div class="subtitle">
+                    Manage your StudioAI connection and view system status.
+                </div>
+            </div>
+
+            <div class="workspace-grid">
+
+                <div class="info-card">
+                    <h3>AI Backend</h3>
+                    <p id="workspaceBackend">Checking connection...</p>
+                </div>
+
+                <div class="info-card">
+                    <h3>AI Model</h3>
+                    <p id="workspaceModel">Checking model...</p>
+                </div>
+
+                <div class="info-card">
+                    <h3>Studio Plugin</h3>
+                    <p>
+                        Your Roblox Studio plugin connects directly to the
+                        local AI backend. Live plugin-status reporting has
+                        not been implemented yet.
+                    </p>
+                </div>
+
+                <div class="info-card">
+                    <h3>Workspace Inspection</h3>
+                    <p>
+                        Live Explorer inspection and object editing are not
+                        connected to the website yet. These require a
+                        plugin-to-backend bridge.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="workspace-actions">
+
+                <button class="action-button" id="refreshWorkspace">
+                    Refresh connection
+                </button>
+
+                <button class="action-button secondary" id="returnAssistant">
+                    Return to AI Assistant
+                </button>
+
+            </div>
+
+            <div class="workspace-note">
+                StudioAI currently checks the local backend and model.
+                It does not claim to read or modify your Roblox place from
+                this dashboard. That functionality will require approved
+                plugin actions.
+            </div>
+
+        </div>
+
+    </section>
+
+    <footer class="composer-area" id="composerArea">
+
+        <div class="composer-wrap">
+
+            <div class="composer">
+
+                <textarea id="prompt"
+                    placeholder="Ask StudioAI anything about Roblox development..."></textarea>
+
+                <div class="composer-footer">
+                    <div class="hint">One AI | One conversation | All your tasks</div>
+                    <button class="send" id="send" type="button">Send</button>
+                </div>
+
+            </div>
+
+            <div class="disclaimer">
+                StudioAI can make mistakes. Review scripts and approve Studio actions before applying them.
+            </div>
+
+        </div>
+
+    </footer>
+
+</main>
 </div>
 
 <script>
+"use strict";
+
+const API_BASE = "";
+
 const promptBox = document.getElementById("prompt");
 const sendButton = document.getElementById("send");
 const messages = document.getElementById("messages");
 const welcome = document.getElementById("welcome");
 const content = document.getElementById("content");
+
 const modelStatus = document.getElementById("modelStatus");
 const topStatus = document.getElementById("topStatus");
+const topTitle = document.getElementById("topTitle");
+
+const composerArea = document.getElementById("composerArea");
+
+const assistantView = document.getElementById("assistantView");
+const workspaceView = document.getElementById("workspaceView");
+
+const assistantTab = document.getElementById("assistantTab");
+const workspaceTab = document.getElementById("workspaceTab");
 
 let history = [];
 let busy = false;
 
-async function checkStatus() {
-    try {
-        const response = await fetch("http://127.0.0.1:3000/api/status");
-        const data = await response.json();
+/* PAGE NAVIGATION */
 
-        if (!response.ok) throw new Error("Backend unavailable");
+function showView(viewName) {
+
+    const isWorkspace = viewName === "workspace";
+
+    assistantView.classList.toggle("active", !isWorkspace);
+    workspaceView.classList.toggle("active", isWorkspace);
+
+    assistantTab.classList.toggle("active", !isWorkspace);
+    workspaceTab.classList.toggle("active", isWorkspace);
+
+    composerArea.classList.toggle("hidden", isWorkspace);
+
+    topTitle.textContent = isWorkspace
+        ? "Roblox Studio"
+        : "AI Assistant";
+
+    if (isWorkspace) {
+        refreshStatus();
+    }
+}
+
+assistantTab.addEventListener("click", () => {
+    showView("assistant");
+});
+
+workspaceTab.addEventListener("click", () => {
+    showView("workspace");
+});
+
+document.getElementById("returnAssistant").addEventListener("click", () => {
+    showView("assistant");
+});
+
+document.getElementById("refreshWorkspace").addEventListener("click", () => {
+    refreshStatus();
+});
+
+/* CONNECTION STATUS */
+
+async function refreshStatus() {
+
+    const backendText = document.getElementById("workspaceBackend");
+    const modelText = document.getElementById("workspaceModel");
+
+    try {
+
+        const response = await fetch(
+            `${API_BASE}/api/status`,
+            { cache: "no-store" }
+        );
+
+        if (!response.ok) {
+            throw new Error("Backend returned " + response.status);
+        }
+
+        const data = await response.json();
 
         modelStatus.innerHTML = data.modelInstalled
             ? '<span class="dot" style="background:#42d69a"></span>Online'
             : '<span class="dot"></span>Model not installed';
 
         topStatus.textContent = data.modelInstalled
-            ? "● AI connected"
+            ? "AI connected"
             : "Model missing";
-    } catch {
-        modelStatus.innerHTML = '<span class="dot"></span>Offline';
+
+        backendText.textContent = data.online
+            ? "Connected to the local StudioAI backend."
+            : "Backend is offline.";
+
+        modelText.textContent = data.modelInstalled
+            ? "Model ready: " + (data.model || "Qwen")
+            : "Model not detected.";
+
+    } catch (error) {
+
+        modelStatus.innerHTML =
+            '<span class="dot"></span>Offline';
+
         topStatus.textContent = "Backend disconnected";
+
+        backendText.textContent =
+            "Cannot reach the local backend. Start StudioAI and try again.";
+
+        modelText.textContent =
+            "Model status unavailable while the backend is offline.";
     }
 }
 
+/* CHAT MESSAGES */
+
 function addMessage(role, text) {
+
     welcome.style.display = "none";
 
     const item = document.createElement("div");
@@ -286,43 +805,74 @@ function addMessage(role, text) {
 
     body.append(name, textNode);
     item.append(avatar, body);
+
     messages.appendChild(item);
 
     content.scrollTop = content.scrollHeight;
+
     return textNode;
 }
 
+/* SEND MESSAGE */
+
 async function sendMessage() {
+
     const message = promptBox.value.trim();
+
     if (!message || busy) return;
 
     busy = true;
     sendButton.disabled = true;
+
     promptBox.value = "";
 
     addMessage("user", message);
+
     const responseNode = addMessage("assistant", "Thinking...");
 
     try {
-        const response = await fetch("http://127.0.0.1:3000/api/chat", {
+
+        const response = await fetch(`${API_BASE}/api/chat`, {
+
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ message, history })
+
+            headers: {
+                "Content-Type": "application/json; charset=utf-8"
+            },
+
+            body: JSON.stringify({
+                message,
+                history
+            })
+
         });
 
         const data = await response.json();
-        if (!response.ok) throw new Error(data.error || "Request failed");
 
-        responseNode.textContent = data.reply;
+        if (!response.ok) {
+            throw new Error(data.error || "Request failed");
+        }
+
+        responseNode.textContent =
+            typeof data.reply === "string"
+                ? data.reply
+                : "The AI returned an invalid response.";
+
         history.push(
             { role: "user", content: message },
-            { role: "assistant", content: data.reply }
+            { role: "assistant", content: responseNode.textContent }
         );
+
     } catch (error) {
-        responseNode.textContent = "Connection error: " + error.message;
+
+        responseNode.textContent =
+            "Connection error: " + error.message;
+
     } finally {
+
         busy = false;
         sendButton.disabled = false;
+
         promptBox.focus();
         content.scrollTop = content.scrollHeight;
     }
@@ -331,28 +881,51 @@ async function sendMessage() {
 sendButton.addEventListener("click", sendMessage);
 
 promptBox.addEventListener("keydown", event => {
+
     if (event.key === "Enter" && !event.shiftKey) {
+
         event.preventDefault();
         sendMessage();
+
     }
+
 });
+
+/* SUGGESTIONS */
 
 document.querySelectorAll(".suggestion").forEach(button => {
+
     button.addEventListener("click", () => {
+
         promptBox.value = button.dataset.prompt;
         promptBox.focus();
+
     });
+
 });
+
+/* NEW CONVERSATION */
 
 document.getElementById("newChat").addEventListener("click", () => {
+
     history = [];
+
     messages.replaceChildren();
+
     welcome.style.display = "block";
+
     promptBox.value = "";
+
+    showView("assistant");
+
 });
 
-checkStatus();
-setInterval(checkStatus, 10000);
+/* START */
+
+refreshStatus();
+
+setInterval(refreshStatus, 10000);
+
 </script>
 </body>
 </html>
