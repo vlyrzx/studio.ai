@@ -4,678 +4,304 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>StudioAI — Roblox Development Assistant</title>
-<meta name="theme-color" content="#090d1b">
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
+<title>StudioAI</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-    --bg: #090d1b;
-    --panel: #10172a;
-    --panel2: #151e35;
-    --border: rgba(148,163,184,.13);
-    --blue: #3b82f6;
-    --indigo: #6366f1;
-    --purple: #8b5cf6;
-    --text: #f1f5ff;
-    --muted: #8793ad;
+ --bg:#090d1b;--sidebar:#0c1222;--panel:#111a2d;
+ --border:#263149;--text:#edf2ff;--muted:#8996ae;
+ --blue:#4f8cff;--purple:#8b5cf6;
 }
-
-* { box-sizing: border-box; }
-
-body {
-    margin: 0;
-    background:
-        radial-gradient(ellipse at 60% -20%, rgba(79,70,229,.20), transparent 45%),
-        radial-gradient(ellipse at 100% 50%, rgba(59,130,246,.08), transparent 40%),
-        var(--bg);
-    color: var(--text);
-    font-family: Inter, sans-serif;
-    min-height: 100vh;
-}
-
-button, input, textarea, select { font: inherit; }
-
-button { cursor: pointer; }
-
-.app {
-    display: flex;
-    min-height: 100vh;
-}
-
-.sidebar {
-    width: 250px;
-    flex-shrink: 0;
-    background: rgba(10,15,30,.88);
-    border-right: 1px solid var(--border);
-    padding: 25px 17px;
-    display: flex;
-    flex-direction: column;
-}
-
-.brand {
-    display: flex;
-    align-items: center;
-    gap: 11px;
-    font-weight: 800;
-    font-size: 21px;
-    letter-spacing: -.8px;
-    padding: 0 9px;
-    margin-bottom: 38px;
-}
-
-.logo {
-    width: 38px;
-    height: 38px;
-    border-radius: 12px;
-    background: linear-gradient(135deg,var(--blue),var(--purple));
-    display: grid;
-    place-items: center;
-    box-shadow: 0 5px 25px #5145cd55;
-}
-
-.logo svg { width: 22px; }
-
-.section-label {
-    color: #65718b;
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 1.5px;
-    padding: 0 11px;
-    margin: 18px 0 10px;
-}
-
-.nav {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px;
-    border-radius: 10px;
-    color: #929db5;
-    font-size: 13px;
-    font-weight: 600;
-    margin-bottom: 5px;
-    cursor: pointer;
-    transition: .2s;
-}
-
-.nav:hover, .nav.active {
-    color: white;
-    background: linear-gradient(100deg,#2446a555,#713ec633);
-}
-
-.nav.active {
-    border: 1px solid #536de455;
-}
-
-.nav svg {
-    width: 18px;
-    height: 18px;
-}
-
-.sidebar-bottom {
-    margin-top: auto;
-}
-
-.connection {
-    border: 1px solid var(--border);
-    background: #111a2d;
-    border-radius: 12px;
-    padding: 13px;
-    margin-bottom: 18px;
-}
-
-.connection-title {
-    font-size: 12px;
-    font-weight: 700;
-    margin-bottom: 9px;
-}
-
-.status {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 11px;
-    color: var(--muted);
-}
-
-.dot {
-    width: 7px;
-    height: 7px;
-    background: #64748b;
-    border-radius: 50%;
-}
-
-.dot.online {
-    background: #22c55e;
-    box-shadow: 0 0 9px #22c55e88;
-}
-
-.main {
-    flex: 1;
-    min-width: 0;
-    padding: 28px 5%;
-}
-
-.topbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 65px;
-}
-
-.breadcrumb {
-    color: var(--muted);
-    font-size: 13px;
-}
-
-.breadcrumb strong { color: white; }
-
-.top-right {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-}
-
-.model-select {
-    color: #dce6ff;
-    background: #151e35;
-    border: 1px solid var(--border);
-    padding: 10px 13px;
-    border-radius: 9px;
-    outline: none;
-    max-width: 220px;
-    font-size: 12px;
-}
-
-.model-select option {
-    background: #11182b;
-}
-
-.avatar {
-    width: 35px;
-    height: 35px;
-    display: grid;
-    place-items: center;
-    border-radius: 11px;
-    background: linear-gradient(135deg,var(--blue),var(--purple));
-    font-size: 13px;
-    font-weight: 800;
-}
-
-.hero {
-    max-width: 850px;
-    margin: 0 auto;
-    text-align: center;
-}
-
-.eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    color: #a5b4fc;
-    background: #4338ca22;
-    border: 1px solid #6366f144;
-    padding: 8px 13px;
-    border-radius: 30px;
-    font-size: 11px;
-    font-weight: 700;
-    margin-bottom: 23px;
-}
-
-.hero h1 {
-    font-size: clamp(36px,5vw,57px);
-    line-height: 1.12;
-    letter-spacing: -2.8px;
-    margin: 0;
-    font-weight: 800;
-}
-
-.gradient-text {
-    background: linear-gradient(100deg,#60a5fa 10%,#818cf8 48%,#c084fc 90%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-}
-
-.hero p {
-    color: var(--muted);
-    font-size: 14px;
-    line-height: 1.8;
-    max-width: 520px;
-    margin: 18px auto 34px;
-}
-
-.chat-box {
-    background: linear-gradient(145deg,#141d34,#10172a);
-    border: 1px solid #6475bd44;
-    border-radius: 17px;
-    padding: 15px;
-    box-shadow: 0 15px 70px #0005, 0 0 35px #5145cd12;
-    text-align: left;
-    transition: .2s;
-}
-
-.chat-box:focus-within {
-    border-color: #6366f1aa;
-    box-shadow: 0 15px 70px #0005,0 0 25px #6366f122;
-}
-
-#message {
-    display: block;
-    width: 100%;
-    min-height: 90px;
-    resize: vertical;
-    background: transparent;
-    border: none;
-    outline: none;
-    color: white;
-    font-size: 14px;
-    padding: 7px;
-}
-
-#message::placeholder { color: #64718e; }
-
-.chat-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-    padding-top: 12px;
-    border-top: 1px solid var(--border);
-}
-
-.chat-hint {
-    color: #73809b;
-    font-size: 11px;
-}
-
-.send {
-    background: linear-gradient(110deg,#3478ef,#7152e9);
-    border: none;
-    color: white;
-    font-weight: 700;
-    font-size: 12px;
-    padding: 11px 18px;
-    border-radius: 9px;
-    box-shadow: 0 4px 18px #4f46e555;
-    transition: .2s;
-}
-
-.send:hover {
-    transform: translateY(-2px);
-    filter: brightness(1.15);
-}
-
-.send:disabled {
-    opacity: .55;
-    cursor: wait;
-    transform: none;
-}
-
-.suggestions {
-    display: grid;
-    grid-template-columns: repeat(3,1fr);
-    gap: 12px;
-    margin-top: 18px;
-    text-align: left;
-}
-
-.suggestion {
-    background: #111a2d;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 15px;
-    cursor: pointer;
-    transition: .2s;
-}
-
-.suggestion:hover {
-    background: #192442;
-    border-color: #6366f177;
-    transform: translateY(-2px);
-}
-
-.suggestion-icon {
-    width: 31px;
-    height: 31px;
-    display: grid;
-    place-items: center;
-    border-radius: 9px;
-    margin-bottom: 12px;
-    background: #315ddc33;
-    color: #7db5ff;
-}
-
-.suggestion:nth-child(2) .suggestion-icon {
-    background: #7646d333;
-    color: #c4a4ff;
-}
-
-.suggestion:nth-child(3) .suggestion-icon {
-    background: #4b54bd33;
-    color: #a5b4fc;
-}
-
-.suggestion strong {
-    font-size: 12px;
-    display: block;
-    margin-bottom: 6px;
-}
-
-.suggestion span {
-    color: var(--muted);
-    font-size: 10px;
-    line-height: 1.5;
-}
-
-.response-area {
-    max-width: 850px;
-    margin: 30px auto 0;
-    display: none;
-    text-align: left;
-}
-
-.response-card {
-    background: #111a2d;
-    border: 1px solid var(--border);
-    border-radius: 13px;
-    padding: 20px;
-    margin-bottom: 14px;
-}
-
-.response-heading {
-    font-size: 12px;
-    font-weight: 700;
-    color: #a5b4fc;
-    margin-bottom: 14px;
-}
-
-.response-content {
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-    color: #dbe5f8;
-    font-size: 13px;
-    line-height: 1.8;
-}
-
-.error { color: #fca5a5; }
-
-.footer {
-    text-align: center;
-    color: #596780;
-    font-size: 10px;
-    margin-top: 65px;
-}
-
-@media(max-width:750px) {
-    .sidebar { width: 66px; padding: 20px 9px; }
-    .brand { padding: 0 4px; }
-    .brand-name,.nav span,.section-label,.connection { display:none; }
-    .nav { justify-content:center; padding:12px 5px; }
-    .main { padding: 20px 15px; }
-    .topbar { margin-bottom: 50px; }
-    .suggestions { grid-template-columns:1fr; }
-    .hero h1 { letter-spacing:-1.5px; }
-    .model-select { max-width:160px; }
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,sans-serif;height:100vh;overflow:hidden}
+button,textarea,select{font:inherit}
+button{cursor:pointer}
+.app{display:flex;height:100vh}
+.sidebar{width:255px;flex-shrink:0;background:var(--sidebar);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:20px 13px}
+.brand{display:flex;align-items:center;gap:11px;padding:5px 9px 24px;font-size:20px;font-weight:800}
+.logo{width:35px;height:35px;border-radius:11px;background:linear-gradient(135deg,var(--blue),var(--purple));display:grid;place-items:center;font-size:19px}
+.new-chat{width:100%;padding:12px;border:1px solid #435a8b66;border-radius:10px;background:#17233b;color:white;text-align:left;font-weight:600;margin-bottom:24px}
+.new-chat:hover,.nav:hover,.history-item:hover{background:#1a2946}
+.label{font-size:10px;letter-spacing:1.4px;color:#65718b;font-weight:800;padding:0 10px;margin:8px 0}
+.nav{padding:11px;border-radius:9px;color:#a5b1c9;font-size:13px;cursor:pointer;margin:3px 0}
+.nav.active{background:#25365a;color:white}
+.history{flex:1;min-height:0;overflow:auto;margin-top:20px}
+.history-item{padding:10px;border-radius:8px;color:#a5b1c9;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.history-item.selected{background:#192640;color:white}
+.sidebar-bottom{margin-top:auto}
+.connection{background:#111a2d;border:1px solid var(--border);padding:12px;border-radius:10px}
+.connection-title{font-size:11px;font-weight:700;margin-bottom:8px}
+.status{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:8px}
+.dot{width:7px;height:7px;background:#64748b;border-radius:50%}
+.dot.online{background:#22c55e;box-shadow:0 0 9px #22c55e88}
+.main{flex:1;min-width:0;display:flex;flex-direction:column;height:100vh}
+.topbar{height:62px;flex-shrink:0;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 25px}
+.page-title{font-size:13px;font-weight:700}
+.top-right{display:flex;align-items:center;gap:12px}
+.model-select{max-width:230px;color:#dce6ff;background:#151e35;border:1px solid var(--border);padding:9px;border-radius:9px;font-size:12px}
+.model-select option{background:#11182b}
+.avatar{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--blue),var(--purple));display:grid;place-items:center;font-size:12px;font-weight:800}
+.chat-shell{width:min(900px,100%);margin:auto;flex:1;min-height:0;display:flex;flex-direction:column;padding:0 28px}
+.messages{flex:1;min-height:0;overflow-y:auto;padding:30px 0;scroll-behavior:smooth}
+.welcome{min-height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+.welcome h1{font-size:36px;letter-spacing:-1.5px;margin:0 0 12px}
+.gradient{background:linear-gradient(100deg,#60a5fa,#a78bfa);background-clip:text;-webkit-background-clip:text;color:transparent}
+.welcome p{font-size:13px;color:var(--muted);line-height:1.8;max-width:480px;margin-bottom:28px}
+.suggestions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:700px}
+.suggestion{background:#111a2d;border:1px solid var(--border);border-radius:11px;padding:14px;text-align:left;color:white}
+.suggestion:hover{background:#192642;border-color:#6475bd}
+.suggestion strong{display:block;font-size:11px;margin-bottom:6px}
+.suggestion span{font-size:10px;color:var(--muted);line-height:1.5}
+.message{display:flex;gap:14px;margin:0 auto 25px;max-width:790px;align-items:flex-start}
+.message.user{justify-content:flex-end}
+.message-body{min-width:0;max-width:calc(100% - 45px);font-size:14px;line-height:1.8;overflow-wrap:anywhere;color:#e0e8f8}
+.message.user .message-body{background:#1b2943;border:1px solid #354768;border-radius:17px 17px 5px 17px;padding:11px 15px;max-width:78%;white-space:pre-wrap}
+.message.assistant .message-body{flex:1}
+.message-avatar{width:29px;height:29px;flex-shrink:0;border-radius:9px;background:linear-gradient(135deg,var(--blue),var(--purple));display:grid;place-items:center;font-size:11px;font-weight:800}
+.message.user .message-avatar{display:none}
+.message-body p{margin:0 0 13px}
+.message-body h1,.message-body h2,.message-body h3{color:white;line-height:1.3;margin:20px 0 9px}
+.message-body h1{font-size:22px}.message-body h2{font-size:18px}.message-body h3{font-size:15px}
+.message-body ul,.message-body ol{padding-left:24px;margin:8px 0 15px}
+.message-body li{margin:5px 0}
+.message-body blockquote{border-left:3px solid #647de5;padding-left:13px;color:#aebbd2}
+.message-body code{font-family:"JetBrains Mono",monospace;background:#222d43;padding:2px 5px;border-radius:5px;font-size:.88em;color:#b9d2ff}
+.code-wrap{margin:12px 0 16px;border:1px solid #34415b;border-radius:10px;overflow:hidden;background:#080e1a}
+.code-head{display:flex;justify-content:space-between;padding:8px 12px;background:#121c2e;border-bottom:1px solid #29364d;color:#9eabc2;font-size:10px}
+.copy-code{border:0;background:none;color:#b9c8e4;font-size:10px}
+.code-wrap pre{margin:0;padding:14px;overflow:auto;font:12px/1.65 "JetBrains Mono",monospace;color:#d9e5fb;white-space:pre}
+.code-wrap pre code{background:none;padding:0;color:inherit}
+.composer-area{flex-shrink:0;padding:12px 0 18px;background:linear-gradient(180deg,transparent,#090d1b 18%)}
+.composer{border:1px solid #46577b;background:#121b2e;border-radius:16px;padding:12px;box-shadow:0 12px 45px #0005}
+.composer:focus-within{border-color:#7187d6}
+#message{width:100%;min-height:45px;max-height:190px;resize:none;background:transparent;border:0;outline:0;color:white;font-size:13px;line-height:1.6;padding:4px}
+#message::placeholder{color:#71809d}
+.composer-actions{display:flex;justify-content:space-between;align-items:center;padding-top:8px}
+.hint{font-size:10px;color:#77849d}
+.send{border:0;border-radius:9px;padding:9px 15px;background:linear-gradient(110deg,#3478ef,#7152e9);color:white;font-size:11px;font-weight:750}
+.send:disabled{opacity:.55;cursor:wait}
+.footer-note{text-align:center;color:#596780;font-size:9px;margin-top:9px}
+.typing{display:inline-flex;gap:5px;padding:8px 0}
+.typing i{width:6px;height:6px;border-radius:50%;background:#9aa9c5;animation:pulse 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes pulse{0%,80%,100%{opacity:.35;transform:translateY(0)}40%{opacity:1;transform:translateY(-4px)}}
+.placeholder{margin:auto;text-align:center;color:var(--muted)}
+.placeholder h2{color:white}
+@media(max-width:760px){
+ .sidebar{width:68px;padding:15px 8px}
+ .brand{justify-content:center;padding:5px 0 20px}
+ .brand span,.new-chat span,.label,.nav span,.connection,.history{display:none}
+ .new-chat{text-align:center;padding:11px 4px}
+ .nav{text-align:center;padding:12px 4px}
+ .chat-shell{padding:0 14px}
+ .suggestions{grid-template-columns:1fr}
+ .suggestion:nth-child(n+3){display:none}
+ .topbar{padding:0 13px}
+ .model-select{max-width:145px}
 }
 </style>
 </head>
-
 <body>
 <div class="app">
-
 <aside class="sidebar">
-    <div class="brand">
-        <div class="logo">
-            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-                <path d="M4 17L12 4l8 13H4Z"/>
-                <path d="M8 17l4-7 4 7"/>
-            </svg>
-        </div>
-        <span class="brand-name">StudioAI</span>
-    </div>
-
-    <div class="section-label">WORKSPACE</div>
-    <div class="nav active" data-page="home">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/></svg>
-        <span>Dashboard</span>
-    </div>
-    <div class="nav" data-page="chat">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.5 8.5 0 0 1-9 8.5 9 9 0 0 1-4-.9L3 21l1.9-4.5A8.5 8.5 0 1 1 21 11.5Z"/></svg>
-        <span>AI Assistant</span>
-    </div>
-    <div class="nav" data-page="projects">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10H3V7Z"/></svg>
-        <span>Projects</span>
-    </div>
-
-    <div class="section-label">CONFIGURATION</div>
-    <div class="nav" data-page="models">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-1.7 2.9-.2-.1a1.7 1.7 0 0 0-1.8.2l-.2.1h-3.4l-.1-.2a1.7 1.7 0 0 0-1.6-1.1h-.2l-1.7-2.9.1-.2a1.7 1.7 0 0 0-.4-1.8l-.1-.1v-3.4l.2-.1a1.7 1.7 0 0 0 1.1-1.6v-.2l2.9-1.7.2.1a1.7 1.7 0 0 0 1.8-.4l.1-.1h3.4l.1.2a1.7 1.7 0 0 0 1.6 1.1h.2l1.7 2.9-.1.2a1.7 1.7 0 0 0 .4 1.8l.1.1v3.4Z" transform="translate(-2 -2) scale(.95)"/></svg>
-        <span>AI Models</span>
-    </div>
-    <div class="nav" data-page="connection">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 12h8m-8 4h5M7 4h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/></svg>
-        <span>Connections</span>
-    </div>
-
-    <div class="sidebar-bottom">
-        <div class="connection">
-            <div class="connection-title">Local AI connection</div>
-            <div class="status"><span class="dot" id="sideDot"></span><span id="sideStatus">Checking...</span></div>
-        </div>
-        <div class="nav" data-page="settings">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-1.7 2.9-.2-.1a1.7 1.7 0 0 0-1.8.2l-.2.1h-3.4l-.1-.2a1.7 1.7 0 0 0-1.6-1.1h-.2l-1.7-2.9.1-.2a1.7 1.7 0 0 0-.4-1.8l-.1-.1v-3.4l.2-.1a1.7 1.7 0 0 0 1.1-1.6v-.2l2.9-1.7.2.1a1.7 1.7 0 0 0 1.8-.4l.1-.1h3.4l.1.2a1.7 1.7 0 0 0 1.6 1.1h.2l1.7 2.9-.1.2a1.7 1.7 0 0 0 .4 1.8l.1.1v3.4Z" transform="translate(-2 -2) scale(.95)"/></svg>
-            <span>Settings</span>
-        </div>
-    </div>
+ <div class="brand"><div class="logo">✦</div><span>StudioAI</span></div>
+ <button class="new-chat" id="newChat">＋ <span>New chat</span></button>
+ <div class="label">WORKSPACE</div>
+ <div class="nav active" data-page="chat">▤ &nbsp; <span>AI Assistant</span></div>
+ <div class="nav" data-page="home">▦ &nbsp; <span>Dashboard</span></div>
+ <div class="nav" data-page="projects">▱ &nbsp; <span>Projects</span></div>
+ <div class="history">
+  <div class="label">RECENT CHATS</div>
+  <div id="historyList"></div>
+ </div>
+ <div class="label">CONFIGURATION</div>
+ <div class="nav" data-page="models">⚙ &nbsp; <span>AI Models</span></div>
+ <div class="nav" data-page="connection">⌁ &nbsp; <span>Connections</span></div>
+ <div class="nav" data-page="settings">☷ &nbsp; <span>Settings</span></div>
+ <div class="sidebar-bottom">
+  <div class="connection">
+   <div class="connection-title">Local AI connection</div>
+   <div class="status"><span class="dot" id="sideDot"></span><span id="sideStatus">Checking...</span></div>
+  </div>
+ </div>
 </aside>
 
 <main class="main">
-    <header class="topbar">
-        <div class="breadcrumb">Workspace / <strong id="breadcrumbPage">Dashboard</strong></div>
-        <div class="top-right">
-            <select class="model-select" id="modelSelect" aria-label="Select AI model">
-                <option value="qwen2.5:7b">Qwen 2.5 7B</option>
-                <option value="qwen2.5-coder:14b-16k">Qwen Coder 14B 16K</option>
-                <option value="qwen2.5-coder:14b">Qwen Coder 14B</option>
-            </select>
-            <div class="avatar">S</div>
-        </div>
-    </header>
+ <header class="topbar">
+  <div class="page-title" id="pageTitle">AI Assistant</div>
+  <div class="top-right">
+   <select class="model-select" id="modelSelect">
+    <option value="qwen2.5:7b">Qwen 2.5 7B</option>
+    <option value="qwen2.5-coder:14b-16k">Qwen Coder 14B 16K</option>
+    <option value="qwen2.5-coder:14b">Qwen Coder 14B</option>
+   </select>
+   <div class="avatar">S</div>
+  </div>
+ </header>
 
-    <section class="hero">
-        <div class="eyebrow">
-            <span class="dot online"></span>
-            YOUR ROBLOX DEVELOPMENT ASSISTANT
-        </div>
+ <section class="chat-shell" id="chatPage">
+  <div class="messages" id="messages">
+   <div class="welcome" id="welcome">
+    <h1>What are we <span class="gradient">building today?</span></h1>
+    <p>Your local AI assistant for Roblox Studio. Create complete Luau systems, debug scripts, and plan your next experience.</p>
+    <div class="suggestions">
+     <button class="suggestion" onclick="usePrompt('Create a complete Roblox sprint system with PC and mobile controls. Give me the full script and exact Explorer placement.')"><strong>⌘ &nbsp; Generate scripts</strong><span>Create complete Roblox systems with Luau.</span></button>
+     <button class="suggestion" onclick="usePrompt('Help me debug a Roblox Studio script. Explain common causes and how to fix them.')"><strong>⚡ &nbsp; Debug code</strong><span>Find issues and understand your errors.</span></button>
+     <button class="suggestion" onclick="usePrompt('Give me five original Roblox horror game concepts with unique mechanics.')"><strong>✦ &nbsp; Game ideas</strong><span>Explore new experiences.</span></button>
+    </div>
+   </div>
+  </div>
+  <div class="composer-area">
+   <div class="composer">
+    <textarea id="message" rows="1" placeholder="Message StudioAI..."></textarea>
+    <div class="composer-actions">
+     <span class="hint">Enter to send · Shift + Enter for a new line</span>
+     <button class="send" id="sendButton" onclick="sendMessage()">Send ↑</button>
+    </div>
+   </div>
+   <div class="footer-note">StudioAI can make mistakes. Check generated scripts before publishing.</div>
+  </div>
+ </section>
 
-        <h1>Build something<br><span class="gradient-text">incredible.</span></h1>
-        <p>
-            Your workspace for creating, scripting, and improving Roblox experiences.
-            Powered by your own local AI models.
-        </p>
-
-        <div class="chat-box">
-            <textarea id="message" placeholder="Ask StudioAI to build a system, debug a script, or brainstorm your next game..."></textarea>
-            <div class="chat-actions">
-                <span class="chat-hint">Enter to send · Shift + Enter for a new line</span>
-                <button class="send" id="sendButton" onclick="sendMessage()">Send message ↗</button>
-            </div>
-        </div>
-
-        <div class="suggestions">
-            <div class="suggestion" onclick="usePrompt('Create a complete Roblox sprint system with PC and mobile controls.')">
-                <div class="suggestion-icon">⌘</div>
-                <strong>Generate scripts</strong>
-                <span>Create complete Roblox systems with Luau.</span>
-            </div>
-            <div class="suggestion" onclick="usePrompt('Help me debug a Roblox Studio script. Explain common causes and how to fix them.')">
-                <div class="suggestion-icon">⚡</div>
-                <strong>Debug code</strong>
-                <span>Find issues and understand your errors.</span>
-            </div>
-            <div class="suggestion" onclick="usePrompt('Give me five original Roblox horror game concepts with unique mechanics.')">
-                <div class="suggestion-icon">✦</div>
-                <strong>Game ideas</strong>
-                <span>Explore mechanics and new experiences.</span>
-            </div>
-        </div>
-    </section>
-
-    <section class="response-area" id="responseArea">
-        <div class="response-card">
-            <div class="response-heading">YOU</div>
-            <div class="response-content" id="userQuestion"></div>
-        </div>
-        <div class="response-card">
-            <div class="response-heading">✦ STUDIOAI</div>
-            <div class="response-content" id="aiResponse">Thinking...</div>
-        </div>
-    </section>
-
-    <footer class="footer">
-        STUDIOAI · BUILT FOR ROBLOX CREATORS
-    </footer>
+ <section class="placeholder" id="placeholderPage" hidden>
+  <h2 id="placeholderTitle">Projects</h2>
+  <p id="placeholderText">Choose AI Assistant to start chatting.</p>
+  <button class="send" onclick="showPage('chat')">Return to AI Assistant</button>
+ </section>
 </main>
 </div>
 
 <script>
-const API = "http://127.0.0.1:3000";
+const API="http://127.0.0.1:3000";
+const messageInput=document.getElementById("message");
+const sendButton=document.getElementById("sendButton");
+const messages=document.getElementById("messages");
+const welcome=document.getElementById("welcome");
+const modelSelect=document.getElementById("modelSelect");
+let chats=[],activeChatId=null,busy=false;
 
-const messageInput = document.getElementById("message");
-const sendButton = document.getElementById("sendButton");
-const responseArea = document.getElementById("responseArea");
-const userQuestion = document.getElementById("userQuestion");
-const aiResponse = document.getElementById("aiResponse");
-const modelSelect = document.getElementById("modelSelect");
+function id(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 
-async function checkConnection() {
-    const dot = document.getElementById("sideDot");
-    const status = document.getElementById("sideStatus");
-
-    try {
-        const response = await fetch(`${API}/health`);
-        if (!response.ok) throw new Error("Offline");
-
-        const data = await response.json();
-        dot.classList.add("online");
-        status.textContent = data.status === "online" ? "Ollama connected" : "Offline";
-    } catch {
-        dot.classList.remove("online");
-        status.textContent = "Start local server";
-    }
+function inline(text){
+ let s=escapeHTML(text);
+ s=s.replace(/`([^`]+)`/g,"<code>$1</code>");
+ s=s.replace(/\*\*([^*]+)\*\*/g,"<strong>$1</strong>");
+ s=s.replace(/\*([^*]+)\*/g,"<em>$1</em>");
+ s=s.replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g,'<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+ return s;
 }
-
-async function loadModels() {
-    try {
-        const response = await fetch(`${API}/models`);
-        if (!response.ok) throw new Error("Models unavailable");
-
-        const data = await response.json();
-
-        for (const option of modelSelect.options) {
-            const model = data.models.find(item => item.name === option.value);
-            option.disabled = !model || !model.installed;
-            if (option.disabled) option.textContent += " (not installed)";
-        }
-
-        const selected = modelSelect.selectedOptions[0];
-        if (selected && selected.disabled) {
-            const available = [...modelSelect.options].find(option => !option.disabled);
-            if (available) modelSelect.value = available.value;
-        }
-    } catch (error) {
-        console.warn("Could not load model list:", error);
-    }
+function markdown(raw){
+ const lines=String(raw??"").replace(/\r/g,"").split("\n");
+ let out=[],p=[],items=[],type=null;
+ function fp(){if(p.length){out.push("<p>"+p.map(inline).join("<br>")+"</p>");p=[]}}
+ function fl(){if(items.length){out.push("<"+type+">"+items.map(x=>"<li>"+inline(x)+"</li>").join("")+"</"+type+">");items=[];type=null}}
+ for(let i=0;i<lines.length;i++){
+  let line=lines[i];
+  if(line.startsWith("```")){
+   fp();fl();let lang=line.slice(3).trim()||"Code",code=[];i++;
+   while(i<lines.length&&!lines[i].startsWith("```"))code.push(lines[i++]);
+   out.push('<div class="code-wrap"><div class="code-head"><span>'+escapeHTML(lang)+'</span><button class="copy-code">Copy code</button></div><pre><code>'+escapeHTML(code.join("\n"))+'</code></pre></div>');
+   continue;
+  }
+  let h=line.match(/^(#{1,3})\s+(.+)$/),b=line.match(/^\s*[-*]\s+(.+)$/),n=line.match(/^\s*\d+[.)]\s+(.+)$/);
+  if(h){fp();fl();let z=h[1].length;out.push("<h"+z+">"+inline(h[2])+"</h"+z+">");continue}
+  if(b||n){fp();let t=n?"ol":"ul";if(type&&type!==t)fl();type=t;items.push((b||n)[1]);continue}
+  if(/^\s*>\s?/.test(line)){fp();fl();out.push("<blockquote>"+inline(line.replace(/^\s*>\s?/,""))+"</blockquote>");continue}
+  if(!line.trim()){fp();fl();continue}
+  fl();p.push(line);
+ }
+ fp();fl();return out.join("")||"<p></p>";
 }
-
-function usePrompt(prompt) {
-    messageInput.value = prompt;
-    messageInput.focus();
+function activeChat(){return chats.find(c=>c.id===activeChatId)}
+function renderHistory(){
+ const list=document.getElementById("historyList");list.innerHTML="";
+ chats.forEach(c=>{
+  const el=document.createElement("div");el.className="history-item"+(c.id===activeChatId?" selected":"");
+  el.textContent=c.title;el.title=c.title;
+  el.onclick=()=>{activeChatId=c.id;renderHistory();renderChat();showPage("chat")};
+  list.appendChild(el);
+ });
 }
-
-async function sendMessage() {
-    const message = messageInput.value.trim();
-    if (!message) return;
-
-    sendButton.disabled = true;
-    sendButton.textContent = "Thinking...";
-    responseArea.style.display = "block";
-    userQuestion.textContent = message;
-    aiResponse.classList.remove("error");
-    aiResponse.textContent = "StudioAI is thinking...";
-    responseArea.scrollIntoView({ behavior: "smooth", block: "start" });
-
-    try {
-        const response = await fetch(`${API}/chat`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                message,
-                model: modelSelect.value
-            })
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.error || "The request failed.");
-        }
-
-        aiResponse.textContent = data.reply;
-        messageInput.value = "";
-    } catch (error) {
-        aiResponse.classList.add("error");
-        aiResponse.textContent =
-            "Could not reach StudioAI.\n\n" +
-            error.message +
-            "\n\nMake sure Ollama and your local StudioAI server are running.";
-    } finally {
-        sendButton.disabled = false;
-        sendButton.textContent = "Send message ↗";
-    }
+function renderChat(){
+ messages.innerHTML="";const c=activeChat();
+ if(!c||!c.messages.length){messages.appendChild(welcome);welcome.style.display="flex";return}
+ welcome.style.display="none";
+ c.messages.forEach(m=>appendMessage(m.role,m.content,false));
+ messages.scrollTop=messages.scrollHeight;
 }
+function appendMessage(role,content,scroll=true){
+ const row=document.createElement("div");row.className="message "+role;
+ if(role==="assistant"){const a=document.createElement("div");a.className="message-avatar";a.textContent="S";row.appendChild(a)}
+ const body=document.createElement("div");body.className="message-body";
+ body.innerHTML=role==="user"?escapeHTML(content).replace(/\n/g,"<br>"):markdown(content);
+ row.appendChild(body);messages.appendChild(row);
+ row.querySelectorAll(".copy-code").forEach(btn=>btn.onclick=()=>{
+  navigator.clipboard.writeText(btn.closest(".code-wrap").querySelector("code").textContent)
+   .then(()=>{btn.textContent="Copied!";setTimeout(()=>btn.textContent="Copy code",1200)})
+   .catch(()=>btn.textContent="Copy unavailable");
+ });
+ if(scroll)messages.scrollTop=messages.scrollHeight;
+ return body;
+}
+function showTyping(){
+ const row=document.createElement("div");row.className="message assistant";row.id="typing";
+ const a=document.createElement("div");a.className="message-avatar";a.textContent="S";
+ const b=document.createElement("div");b.className="message-body";b.innerHTML='<span class="typing"><i></i><i></i><i></i></span>';
+ row.append(a,b);messages.appendChild(row);messages.scrollTop=messages.scrollHeight;
+}
+function usePrompt(p){messageInput.value=p;messageInput.focus();resizeInput()}
+function resizeInput(){messageInput.style.height="auto";messageInput.style.height=Math.min(messageInput.scrollHeight,190)+"px"}
 
-messageInput.addEventListener("keydown", event => {
-    if (event.key === "Enter" && !event.shiftKey) {
-        event.preventDefault();
-        sendMessage();
-    }
-});
-
-document.querySelectorAll(".nav").forEach(item => {
-    item.addEventListener("click", () => {
-        document.querySelectorAll(".nav").forEach(nav => nav.classList.remove("active"));
-        item.classList.add("active");
-
-        const page = item.dataset.page;
-        const labels = {
-            home: "Dashboard",
-            chat: "AI Assistant",
-            projects: "Projects",
-            models: "AI Models",
-            connection: "Connections",
-            settings: "Settings"
-        };
-
-        document.getElementById("breadcrumbPage").textContent = labels[page] || "Dashboard";
-
-        if (page === "chat") {
-            messageInput.focus();
-        } else if (page !== "home") {
-            alert(`${labels[page]} is planned for a future StudioAI update.`);
-        }
-    });
-});
-
-checkConnection();
-loadModels();
-setInterval(checkConnection, 15000);
+async function checkConnection(){
+ const dot=document.getElementById("sideDot"),status=document.getElementById("sideStatus");
+ try{const r=await fetch(API+"/health");if(!r.ok)throw Error();const d=await r.json();dot.classList.toggle("online",d.status==="online");status.textContent=d.status==="online"?"Ollama connected":"Offline"}
+ catch{dot.classList.remove("online");status.textContent="Start local server"}
+}
+async function loadModels(){
+ try{
+  const r=await fetch(API+"/models");if(!r.ok)throw Error("Models unavailable");
+  const d=await r.json();
+  for(const o of modelSelect.options){
+   const m=d.models.find(x=>x.name===o.value);o.disabled=!m||!m.installed;
+   if(o.disabled&&!o.textContent.includes("(not installed)"))o.textContent+=" (not installed)";
+  }
+  if(modelSelect.selectedOptions[0]?.disabled){const a=[...modelSelect.options].find(o=>!o.disabled);if(a)modelSelect.value=a.value}
+ }catch(e){console.warn("Could not load models:",e)}
+}
+async function sendMessage(){
+ const message=messageInput.value.trim();if(!message||busy)return;
+ if(!activeChatId){const c={id:id(),title:message.replace(/\s+/g," ").slice(0,38),messages:[]};chats.unshift(c);activeChatId=c.id}
+ const chat=activeChat();
+ if(!chat.messages.length)chat.title=message.replace(/\s+/g," ").slice(0,38)+(message.length>38?"…":"");
+ chat.messages.push({role:"user",content:message});renderHistory();renderChat();
+ messageInput.value="";resizeInput();busy=true;sendButton.disabled=true;sendButton.textContent="Thinking…";showTyping();
+ try{
+  const r=await fetch(API+"/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message,model:modelSelect.value})});
+  const d=await r.json();if(!r.ok)throw Error(d.error||"The request failed.");
+  const reply=d.reply||"The model returned an empty response.";
+  chat.messages.push({role:"assistant",content:reply});document.getElementById("typing")?.remove();appendMessage("assistant",reply);
+ }catch(e){
+  const error="Could not reach StudioAI.\n\n"+e.message+"\n\nMake sure Ollama and your local StudioAI server are running.";
+  chat.messages.push({role:"assistant",content:error});document.getElementById("typing")?.remove();const b=appendMessage("assistant",error);b.style.color="#fca5a5";
+ }finally{busy=false;sendButton.disabled=false;sendButton.textContent="Send ↑";renderHistory();messageInput.focus()}
+}
+function showPage(page){
+ document.querySelectorAll(".nav").forEach(n=>n.classList.toggle("active",n.dataset.page===page));
+ const chat=document.getElementById("chatPage"),placeholder=document.getElementById("placeholderPage");
+ const names={chat:"AI Assistant",home:"Dashboard",projects:"Projects",models:"AI Models",connection:"Connections",settings:"Settings"};
+ document.getElementById("pageTitle").textContent=names[page]||"AI Assistant";
+ if(page==="chat"){chat.hidden=false;placeholder.hidden=true;renderChat()}
+ else{chat.hidden=true;placeholder.hidden=false;document.getElementById("placeholderTitle").textContent=names[page];document.getElementById("placeholderText").textContent=page==="home"?"Your StudioAI workspace. Choose AI Assistant to start chatting.":names[page]+" tools will be added in a future update."}
+}
+document.getElementById("newChat").onclick=()=>{
+ if(busy)return;
+ const c={id:id(),title:"New chat",messages:[]};chats.unshift(c);activeChatId=c.id;renderHistory();renderChat();showPage("chat");messageInput.focus();
+};
+document.querySelectorAll(".nav").forEach(n=>n.onclick=()=>showPage(n.dataset.page));
+messageInput.addEventListener("input",resizeInput);
+messageInput.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMessage()}});
+checkConnection();loadModels();setInterval(checkConnection,15000);
 </script>
 </body>
 </html>
