@@ -3,7 +3,6 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>StudioAI</title>
 
@@ -138,6 +137,7 @@ button { font-family: inherit; }
     font-size: 11px;
     color: var(--muted);
     margin-top: 6px;
+    overflow-wrap: anywhere;
 }
 
 .dot {
@@ -369,8 +369,6 @@ textarea::placeholder { color: #737b8e; }
     margin-top: 10px;
 }
 
-/* WORKSPACE */
-
 .workspace-header {
     margin: 4px 0 22px;
 }
@@ -508,7 +506,7 @@ textarea::placeholder { color: #737b8e; }
             <div class="model-status" id="modelStatus">
                 <span class="dot"></span>Checking connection...
             </div>
-            <div class="model-status">Qwen 2.5 Coder 14B</div>
+            <div class="model-status" id="modelName">Detecting model...</div>
         </div>
     </div>
 
@@ -522,8 +520,6 @@ textarea::placeholder { color: #737b8e; }
     </header>
 
     <section class="content" id="content">
-
-        <!-- ASSISTANT VIEW -->
 
         <div class="view active" id="assistantView">
 
@@ -570,8 +566,6 @@ textarea::placeholder { color: #737b8e; }
             <div class="messages" id="messages"></div>
 
         </div>
-
-        <!-- WORKSPACE VIEW -->
 
         <div class="view" id="workspaceView">
 
@@ -667,6 +661,8 @@ textarea::placeholder { color: #737b8e; }
 <script>
 "use strict";
 
+/* CONFIGURATION */
+
 const API_BASE = "";
 
 const promptBox = document.getElementById("prompt");
@@ -676,48 +672,44 @@ const welcome = document.getElementById("welcome");
 const content = document.getElementById("content");
 
 const modelStatus = document.getElementById("modelStatus");
+const modelName = document.getElementById("modelName");
 const topStatus = document.getElementById("topStatus");
-const topTitle = document.getElementById("topTitle");
-
-const composerArea = document.getElementById("composerArea");
-
-const assistantView = document.getElementById("assistantView");
-const workspaceView = document.getElementById("workspaceView");
-
-const assistantTab = document.getElementById("assistantTab");
-const workspaceTab = document.getElementById("workspaceTab");
 
 let history = [];
 let busy = false;
+let backendOnline = false;
 
-/* PAGE NAVIGATION */
+/* NAVIGATION */
 
 function showView(viewName) {
-
     const isWorkspace = viewName === "workspace";
 
-    assistantView.classList.toggle("active", !isWorkspace);
-    workspaceView.classList.toggle("active", isWorkspace);
+    document.getElementById("assistantView")
+        .classList.toggle("active", !isWorkspace);
 
-    assistantTab.classList.toggle("active", !isWorkspace);
-    workspaceTab.classList.toggle("active", isWorkspace);
+    document.getElementById("workspaceView")
+        .classList.toggle("active", isWorkspace);
 
-    composerArea.classList.toggle("hidden", isWorkspace);
+    document.getElementById("assistantTab")
+        .classList.toggle("active", !isWorkspace);
 
-    topTitle.textContent = isWorkspace
-        ? "Roblox Studio"
-        : "AI Assistant";
+    document.getElementById("workspaceTab")
+        .classList.toggle("active", isWorkspace);
 
-    if (isWorkspace) {
-        refreshStatus();
-    }
+    document.getElementById("composerArea")
+        .classList.toggle("hidden", isWorkspace);
+
+    document.getElementById("topTitle").textContent =
+        isWorkspace ? "Roblox Studio" : "AI Assistant";
+
+    if (isWorkspace) refreshStatus();
 }
 
-assistantTab.addEventListener("click", () => {
+document.getElementById("assistantTab").addEventListener("click", () => {
     showView("assistant");
 });
 
-workspaceTab.addEventListener("click", () => {
+document.getElementById("workspaceTab").addEventListener("click", () => {
     showView("workspace");
 });
 
@@ -729,61 +721,66 @@ document.getElementById("refreshWorkspace").addEventListener("click", () => {
     refreshStatus();
 });
 
-/* CONNECTION STATUS */
+/* BACKEND STATUS */
 
 async function refreshStatus() {
-
     const backendText = document.getElementById("workspaceBackend");
-    const modelText = document.getElementById("workspaceModel");
+    const workspaceModel = document.getElementById("workspaceModel");
 
     try {
-
-        const response = await fetch(
-            `${API_BASE}/api/status`,
-            { cache: "no-store" }
-        );
+        const response = await fetch(`${API_BASE}/api/status`, {
+            method: "GET",
+            cache: "no-store"
+        });
 
         if (!response.ok) {
-            throw new Error("Backend returned " + response.status);
+            throw new Error(`Status endpoint returned HTTP ${response.status}`);
         }
 
         const data = await response.json();
 
-        modelStatus.innerHTML = data.modelInstalled
-            ? '<span class="dot" style="background:#42d69a"></span>Online'
-            : '<span class="dot"></span>Model not installed';
+        backendOnline = Boolean(data.online && data.modelInstalled);
 
-        topStatus.textContent = data.modelInstalled
+        const actualModel = data.model || "Unknown model";
+
+        modelStatus.innerHTML = backendOnline
+            ? '<span class="dot" style="background:#42d69a"></span>Online'
+            : '<span class="dot"></span>Model unavailable';
+
+        modelName.textContent = actualModel;
+
+        topStatus.textContent = backendOnline
             ? "AI connected"
-            : "Model missing";
+            : "Backend or model unavailable";
 
         backendText.textContent = data.online
             ? "Connected to the local StudioAI backend."
             : "Backend is offline.";
 
-        modelText.textContent = data.modelInstalled
-            ? "Model ready: " + (data.model || "Qwen")
-            : "Model not detected.";
+        workspaceModel.textContent = data.modelInstalled
+            ? `Model ready: ${actualModel}`
+            : `Model not installed: ${actualModel}`;
 
     } catch (error) {
+        backendOnline = false;
 
         modelStatus.innerHTML =
             '<span class="dot"></span>Offline';
 
+        modelName.textContent = "Model unavailable";
         topStatus.textContent = "Backend disconnected";
 
         backendText.textContent =
-            "Cannot reach the local backend. Start StudioAI and try again.";
+            `Cannot reach backend: ${error.message}`;
 
-        modelText.textContent =
-            "Model status unavailable while the backend is offline.";
+        workspaceModel.textContent =
+            "Model status unavailable while backend is offline.";
     }
 }
 
-/* CHAT MESSAGES */
+/* CHAT DISPLAY */
 
 function addMessage(role, text) {
-
     welcome.style.display = "none";
 
     const item = document.createElement("div");
@@ -805,7 +802,6 @@ function addMessage(role, text) {
 
     body.append(name, textNode);
     item.append(avatar, body);
-
     messages.appendChild(item);
 
     content.scrollTop = content.scrollHeight;
@@ -813,119 +809,185 @@ function addMessage(role, text) {
     return textNode;
 }
 
-/* SEND MESSAGE */
+/* STREAMING CHAT */
 
 async function sendMessage() {
-
     const message = promptBox.value.trim();
 
     if (!message || busy) return;
 
     busy = true;
     sendButton.disabled = true;
+    sendButton.textContent = "Thinking...";
 
     promptBox.value = "";
 
     addMessage("user", message);
 
     const responseNode = addMessage("assistant", "Thinking...");
+    let fullReply = "";
 
     try {
+        /*
+         * START THE CHAT JOB
+         */
 
-        const response = await fetch(`${API_BASE}/api/chat`, {
-
+        const startResponse = await fetch(`${API_BASE}/api/chat/start`, {
             method: "POST",
-
             headers: {
-                "Content-Type": "application/json; charset=utf-8"
+                "Content-Type": "application/json"
             },
-
+            cache: "no-store",
             body: JSON.stringify({
-                message,
-                history
+                message: message,
+                history: history
             })
-
         });
 
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.error || "Request failed");
+        if (!startResponse.ok) {
+            const errorText = await startResponse.text();
+            throw new Error(
+                `Chat start failed: HTTP ${startResponse.status} ${errorText}`
+            );
         }
 
-        responseNode.textContent =
-            typeof data.reply === "string"
-                ? data.reply
-                : "The AI returned an invalid response.";
+        const startData = await startResponse.json();
+        const jobId = startData.jobId;
+
+        if (!jobId) {
+            throw new Error("Backend did not return a job ID.");
+        }
+
+        /*
+         * POLL FOR GENERATED TOKENS
+         */
+
+        let chunkIndex = 0;
+        let completed = false;
+        const startTime = Date.now();
+        const timeoutMs = 300000;
+
+        responseNode.textContent = "";
+
+        while (!completed) {
+            if (Date.now() - startTime > timeoutMs) {
+                throw new Error("AI response timed out after 5 minutes.");
+            }
+
+            const pollUrl =
+                `${API_BASE}/api/chat/poll?id=${encodeURIComponent(jobId)}&after=${chunkIndex}`;
+
+            const pollResponse = await fetch(pollUrl, {
+                method: "GET",
+                cache: "no-store"
+            });
+
+            if (!pollResponse.ok) {
+                const errorText = await pollResponse.text();
+
+                throw new Error(
+                    `Polling failed: HTTP ${pollResponse.status} ${errorText}`
+                );
+            }
+
+            const pollData = await pollResponse.json();
+
+            if (pollData.error) {
+                throw new Error(pollData.error);
+            }
+
+            const chunks = Array.isArray(pollData.chunks)
+                ? pollData.chunks
+                : [];
+
+            for (const chunk of chunks) {
+                if (typeof chunk === "string") {
+                    fullReply += chunk;
+                    chunkIndex++;
+                }
+            }
+
+            responseNode.textContent = fullReply || "Thinking...";
+            content.scrollTop = content.scrollHeight;
+
+            if (pollData.done) {
+                completed = true;
+                break;
+            }
+
+            await new Promise(resolve => setTimeout(resolve, 150));
+        }
+
+        if (!fullReply.trim()) {
+            throw new Error("The AI finished without returning a response.");
+        }
+
+        /*
+         * SAVE CONVERSATION HISTORY
+         */
 
         history.push(
             { role: "user", content: message },
-            { role: "assistant", content: responseNode.textContent }
+            { role: "assistant", content: fullReply }
         );
 
-    } catch (error) {
+        await refreshStatus();
 
+    } catch (error) {
         responseNode.textContent =
-            "Connection error: " + error.message;
+            "StudioAI Error\n" + error.message;
+
+        console.error("StudioAI chat error:", error);
+
+        await refreshStatus();
 
     } finally {
-
         busy = false;
         sendButton.disabled = false;
+        sendButton.textContent = "Send";
 
         promptBox.focus();
         content.scrollTop = content.scrollHeight;
     }
 }
 
+/* SEND BUTTON */
+
 sendButton.addEventListener("click", sendMessage);
 
 promptBox.addEventListener("keydown", event => {
-
     if (event.key === "Enter" && !event.shiftKey) {
-
         event.preventDefault();
         sendMessage();
-
     }
-
 });
 
 /* SUGGESTIONS */
 
 document.querySelectorAll(".suggestion").forEach(button => {
-
     button.addEventListener("click", () => {
-
         promptBox.value = button.dataset.prompt;
         promptBox.focus();
-
     });
-
 });
 
 /* NEW CONVERSATION */
 
 document.getElementById("newChat").addEventListener("click", () => {
-
     history = [];
-
     messages.replaceChildren();
-
     welcome.style.display = "block";
-
     promptBox.value = "";
-
     showView("assistant");
-
 });
 
 /* START */
 
 refreshStatus();
-
 setInterval(refreshStatus, 10000);
 
+console.log("StudioAI website loaded.");
 </script>
+
 </body>
 </html>
